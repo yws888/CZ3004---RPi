@@ -19,25 +19,25 @@ class AndroidComm(object):
     #Initialize the Bluetooth Connection
     def connect(self):
         while True:
-            BTChannel = 5 #The Bluetooth Channel According to Pi
+            RFCOMMChannel = 5 #The Bluetooth Channel According to Pi
             retry = False
             try:
                 #self.serverSock = BluetoothSocket(3)
                 self.serverSock = BluetoothSocket(RFCOMM)
-                self.serverSock.bind(('', BTChannel)) #Can try bluetooth.PORT_ANY or BTChannel also
-                self.serverSock.listen(1) #Specify how many clients the thing will wait for
+                self.serverSock.bind(('', RFCOMMChannel)) #Can try bluetooth.PORT_ANY or RFCOMMChannel also
+                self.serverSock.listen(RFCOMMChannel) #Specify how many clients the thing will wait for
                 self.port = self.serverSock.getsockname()[1] #Value returned is [host, port]. We need port
 
                 uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
 
                 #Advertise service referenced from PyBluez Documentation
-                advertise_service(self.serverSock, 'MDP-07',
+                advertise_service(self.serverSock, 'MDP_Group_3_RPi Server',
                     service_id = uuid,
                     service_classes = [uuid, SERIAL_PORT_CLASS],
                     profiles = [SERIAL_PORT_PROFILE])
 
                 #Let's wait for connection
-                print ("[BLUETOOTH_INFO] Waiting for connection of RFCOMM channel %d" % self.port) #Which might not be true since we can use PORT_ANY
+                print ("[BLUETOOTH_INFO] Waiting for connection of RFCOMM channel %d" % RFCOMMChannel) #Which might not be true since we can use PORT_ANY
 
                 #Accept a connection
                 (self.clientSock, clientInfo) = self.serverSock.accept()

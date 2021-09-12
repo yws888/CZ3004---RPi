@@ -75,7 +75,7 @@ if __name__ == '__main__':
             except Exception as e:
                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
-            msgSplit = message.split(';')  # Try without semi-colon
+            msgSplit = message.split('>')  # Try without semi-colon
 
             for i, value in enumerate(msgSplit):
                 # Skip the first empty string
@@ -119,16 +119,7 @@ if __name__ == '__main__':
                 ## Sensor Data: From STM
                 elif com == 'SD':
                     ## All these is senior's group formatting JSON string in RPi.
-                    ## We decided to bypass that since Applet can read the message by itself.
-                    # Received Sensor Data
-                    # fl = msg["fl"]
-                    # fm = msg["fm"]
-                    # fr = msg["fr"]
-                    # rf = msg["rf"]
-                    # rb = msg["rb"]
-                    # left = msg["left"]
-                    # data = {'fl': fl, 'fm': fm, 'fr': fr, 'rt': rf, 'rb': rb, 'left': left}
-                    # commsList[APPLET].write(json.dumps(data))
+                    ## We decided to bypass that assuming Applet can read the message by itself.
                     commsList[APPLET].write(json.dumps(msg))
 
                 ## Sensor Data: From STM, after each move.
