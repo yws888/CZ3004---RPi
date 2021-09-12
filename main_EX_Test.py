@@ -34,7 +34,8 @@ if __name__ == '__main__':
     ## Set up message logs
     run_timestamp = datetime.now().isoformat()
     os.makedirs('logs', exist_ok=True)
-    logfile = open(os.path.join('logs', 'rpilog_' + run_timestamp + '.txt'), 'a+')
+    logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
+    os.system("sudo hciconfig hci0 piscan")
 
     ## Initialisation - RPi Comms
     commsList = []
@@ -68,29 +69,26 @@ if __name__ == '__main__':
             except Exception as e:
                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
-            msgSplit = message.split(',')
-            sender = msgSplit[0].split('>')[0]
-            receiver = msgSplit[0].split('>')[1]
+            msgSplit = message.split(', ')
+            sender = msgSplit[0].split(' > ')[0]
+            receiver = msgSplit[0].split(' > ')[1]
             command = msgSplit[1]
+            command = command.rstrip(command[-1])
+            command = command.lstrip(command[0])
             info = msgSplit[2]
 
             ## W, A, D: From Android or Applet
-            if command == 'W1|':
+            if command == "W1|":
                 # Move forward
                 #commsList[STM].write('W')
                 commsList[ANDROID].write('{"com": "statusUpdate", "status": "Moving forward"}')
                 commsList[APPLET].write('received')
 
-            elif command == 'S1|':
+            elif command == "S1|":
                 # Move back
                 #commsList[STM].write('S')
                 commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Moving backward"}')
                 commsList[APPLET].write('received')
-
-
-            elif command == 'B|':
-                # break and disconnect
-                continue
 
     except Exception as e:
         print("[MAIN_ERROR] Error. Prepare to shutdown...")

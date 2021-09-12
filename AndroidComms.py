@@ -31,7 +31,7 @@ class AndroidComm(object):
                 uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
 
                 #Advertise service referenced from PyBluez Documentation
-                advertise_service(self.serverSock, 'MDP_Group_3_RPi Server',
+                advertise_service(self.serverSock, 'MDPGrp3_RPi Server',
                     service_id = uuid,
                     service_classes = [uuid, SERIAL_PORT_CLASS],
                     profiles = [SERIAL_PORT_PROFILE])
@@ -56,7 +56,7 @@ class AndroidComm(object):
 
             #When not yet established, keep retrying
             print('[BLUETOOTH_INFO] Retrying Bluetooth Establishment')
-            time.sleep(1.5)
+            time.sleep(10)
 
     #We need to shutdown any disconnected connections
     def disconnect(self):
