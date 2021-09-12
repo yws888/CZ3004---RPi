@@ -1,14 +1,14 @@
 import serial
 import time
 
-class ArduinoComm(object):
+class STMComm(object):
 
-    #Initialize the items required for Arduino Comms
-    #Remember to check baud rate and communication port!
-    def __init__(self, port='/dev/ttyACM0'):
-        self.commPort = port #TOCHECK from Pi on connections
+    #Initialize the items required for STM Comms
+    #can check baud rate and communication port!
+    def __init__(self):
+        self.commPort = '/dev/ttyUSB0' #TOCHECK from Pi on connections
         self.isEstablished = False
-        self.baud = 115200 #Technical documentation
+        self.baud = 115200
 
     #Good to have to check if connected
     def isConnected(self):
@@ -19,15 +19,15 @@ class ArduinoComm(object):
             retry = False
             try:
                 #Let's wait for connection
-                print ('[ARDUINO_INFO] Waiting for serial connection from Arduino')
+                print ('[STM_INFO] Waiting for serial connection from STM')
 
                 self.serialConn = serial.Serial(self.commPort, self.baud, timeout=0.1)
-                print('[ARDUINO_ACCEPTED] Connected to Arduino.')
+                print('[STM_ACCEPTED] Connected to STM.')
                 self.isEstablished = True
                 retry = False
 
             except Exception as e:
-                print('[ARDUINO_ERROR] Arduino Connection Error: %s' % str(e))
+                print('[STM_ERROR] STM Connection Error: %s' % str(e))
                 retry = True
 
             #When established, break the while(true)
@@ -35,13 +35,13 @@ class ArduinoComm(object):
                 break
 
             #When not yet established, keep retrying
-            print('[ARDUINO_INFO] Retrying Arduino Establishment')
+            print('[STM_INFO] Retrying STM Establishment')
             time.sleep(1)
 
     #Disconnect when done
     def disconnect(self):
         if not (self.serialConn is None): #if (self.serialConn):
-            print('[ARDUINO_CLOSE] Shutting down Arduino Connection')
+            print('[STM_CLOSE] Shutting down STM Connection')
             self.serialConn.close()
             self.isEstablished = False
 
@@ -53,14 +53,14 @@ class ArduinoComm(object):
             readData = readData.decode('utf-8')
             if readData == '':
                 return None
-            print('[ARDUINO_INFO] Received: ' + readData)
+            print('[STM_INFO] Received: ' + readData)
             return readData
 
         except Exception as e:
-            print('[ARDUINO_ERROR] Receiving Error: %s' % str(e))
+            print('[STM_ERROR] Receiving Error: %s' % str(e))
             if ('Input/output error' in str(e)):
                 self.disconnect()
-                print('[ARDUINO_INFO] Re-establishing Arduino Connection.')
+                print('[STM_INFO] Re-establishing STM Connection.')
                 self.connect()
 
     #The fundamental trying to send
@@ -74,7 +74,7 @@ class ArduinoComm(object):
 
             #There is no connections. Send what?
             else:
-                print('[ARDUINO_INVALID] No Arduino Connections')
+                print('[STM_INVALID] No STM Connections')
 
         except Exception as e:
-            print('[ARDUINO_ERROR] Cannot send message: %s' % str(e))
+            print('[STM_ERROR] Cannot send message to STM: %s' % str(e))

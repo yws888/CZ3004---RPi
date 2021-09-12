@@ -19,7 +19,7 @@ class AndroidComm(object):
     #Initialize the Bluetooth Connection
     def connect(self):
         while True:
-            BTChannel = 3 #The Bluetooth Channel According to Pi
+            BTChannel = 5 #The Bluetooth Channel According to Pi
             retry = False
             try:
                 #self.serverSock = BluetoothSocket(3)
@@ -29,7 +29,6 @@ class AndroidComm(object):
                 self.port = self.serverSock.getsockname()[1] #Value returned is [host, port]. We need port
 
                 uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
-                #uuid = '7121A3C0-2CDE-4BED-8253-E3F6C8BCBCAF' #What we generated (not in use)
 
                 #Advertise service referenced from PyBluez Documentation
                 advertise_service(self.serverSock, 'MDP-07',

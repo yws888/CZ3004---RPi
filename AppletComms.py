@@ -5,9 +5,9 @@ class AppletComm(object):
 
     #Initialize the items required for IP Comms
     def __init__(self):
-        self.ipAddress = '192.168.7.7' #IP Address of the RPi
+        self.ipAddress = '192.168.3.1' #IP Address of the RPi
         self.isEstablished = False
-        self.portNum = 36126 #Ephemeral Port, configure on Applet too
+        self.portNum = 8080  #36126, Ephemeral Port, configure on Applet too
         self.client = None
         self.connection = None
 

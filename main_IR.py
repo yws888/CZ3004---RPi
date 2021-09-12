@@ -1,7 +1,7 @@
 from multiprocessing import Process, Queue
 from time import sleep
 
-from ArduinoComms import ArduinoComm
+from STMComms import ArduinoComm
 from AndroidComms import AndroidComm
 from AppletComms import AppletComm
 from ImgRaw import SendRawImages

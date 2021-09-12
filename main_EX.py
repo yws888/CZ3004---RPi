@@ -1,7 +1,7 @@
 from multiprocessing import Process, Queue
 from time import sleep
 
-from ArduinoComms import ArduinoComm
+from STMComms import STMComm
 from AndroidComms import AndroidComm
 from AppletComms import AppletComm
 
@@ -13,12 +13,7 @@ from copy import deepcopy
 from datetime import datetime
 import argparse
 
-# (Thanks Kaishuo!) Setup to handle cases where serial port jumps to ACM1
-# Run this command via SSH: $ sudo python3 main_EX.py --port /dev/ttyACM0 (or ttyACM1 - check with ls /dev/ttyACM*)
-parser = argparse.ArgumentParser(description='MDP RPi Module')
-parser.add_argument('--port', type=str, default='/dev/ttyACM0', help='Arduino Serial port')
-args = parser.parse_args()
-arduino_port = args.port
+# Run this command via SSH: $ sudo python3 main_EX.py
 
 def connect(commsList):
     for comms in commsList:
@@ -43,21 +38,21 @@ if __name__ == '__main__':
 
     ## Initialisation - RPi Comms
     commsList = []
-    commsList.append(ArduinoComm(port=arduino_port))
+    commsList.append(STMComm())
     commsList.append(AndroidComm())
     commsList.append(AppletComm())
     connect(commsList)
 
-    ARDUINO = 0
+    STM = 0
     ANDROID = 1
     APPLET = 2
 
     msgQueue = Queue()
-    arduinoListener = Process(target=listen, args=(msgQueue, commsList[ARDUINO]))
+    STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
     appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
 
-    arduinoListener.start()
+    STMListener.start()
     androidListener.start()
     appletListener.start()
 
@@ -92,17 +87,17 @@ if __name__ == '__main__':
                 ## W, A, D: From Android or Applet
                 if com == 'W':
                     # Move forward
-                    commsList[ARDUINO].write('W')
+                    commsList[STM].write('W')
                     commsList[ANDROID].write('{"com": "statusUpdate", "status": "Moving forward"}')
 
                 elif com == 'A':
                     # Turn left
-                    commsList[ARDUINO].write('A')
+                    commsList[STM].write('A')
                     commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Turning left"}')
 
                 elif com == 'D':
                     # Turn right
-                    commsList[ARDUINO].write('D')
+                    commsList[STM].write('D')
                     commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Turning right"}')
 
                 ## Exploration and Fastest Path: From Android and Applet
@@ -117,11 +112,11 @@ if __name__ == '__main__':
                     # Start Fastest Path
                     commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Running Fastest Path"}')
                     commsList[APPLET].write('{"com": "statusUpdate", "status": "Running Fastest Path"}')
-                ## Additional command: Applet send path to Arduino
+                ## Additional command: Applet send path to STM
                 elif com == 'fpath':
-                    commsList[ARDUINO].write(msg['path'])
+                    commsList[STM].write(msg['path'])
 
-                ## Sensor Data: From Arduino
+                ## Sensor Data: From STM
                 elif com == 'SD':
                     ## All these is senior's group formatting JSON string in RPi.
                     ## We decided to bypass that since Applet can read the message by itself.
@@ -136,7 +131,7 @@ if __name__ == '__main__':
                     # commsList[APPLET].write(json.dumps(data))
                     commsList[APPLET].write(json.dumps(msg))
 
-                ## Sensor Data: From Arduino, after each move.
+                ## Sensor Data: From STM, after each move.
                 elif com == 'MF':
                     data = deepcopy(msg)
                     data['status'] = "Finish Move"
@@ -157,46 +152,46 @@ if __name__ == '__main__':
                     commsList[APPLET].write(json.dumps(data))
 
                 elif com == 'K':
-                    # Force get sensor data from arduino
-                    commsList[ARDUINO].write('K')
+                    # Force get sensor data from STM
+                    commsList[STM].write('K')
 
-                ## R, F, C: all calibration - from Applet or Arduino
+                ## R, F, C: all calibration - from Applet or STM
                 elif com == 'R': # R got right, F for front
-                    commsList[ARDUINO].write('R')
+                    commsList[STM].write('R')
                     # if msg['from'] == 'Applet':
-                    #     commsList[ARDUINO].write('R')
-                    # elif msg['from'] == 'Arduino':
+                    #     commsList[STM].write('R')
+                    # elif msg['from'] == 'STM':
                     #     commsList[APPLET].write('{"com":"statusUpdate", "status":"Finish Calibrate"}')
 
                 elif com == 'F': #nobangwallszxc
-                    commsList[ARDUINO].write('F')
+                    commsList[STM].write('F')
                     # if msg['from'] == 'Applet':
-                    #     commsList[ARDUINO].write('F')
-                    # elif msg['from'] == 'Arduino':
+                    #     commsList[STM].write('F')
+                    # elif msg['from'] == 'STM':
                     #     commsList[APPLET].write('{"com":"statusUpdate", "status":"Finish Calibrate"}')
 
                 elif com == 'f': #nobangblockszxc
-                    commsList[ARDUINO].write('f')
+                    commsList[STM].write('f')
                     # if msg['from'] == 'Applet':
-                    #     commsList[ARDUINO].write('f')
-                    # elif msg['from'] == 'Arduino':
+                    #     commsList[STM].write('f')
+                    # elif msg['from'] == 'STM':
                     #     commsList[APPLET].write('{"com":"statusUpdate", "status":"Finish Calibrate"}')
 
                 elif com == 'C':
                     if msg['from'] == 'Applet':
-                        commsList[ARDUINO].write('C')
-                    elif msg['from'] == 'Arduino':
+                        commsList[STM].write('C')
+                    elif msg['from'] == 'STM':
                         commsList[APPLET].write('{"com":"statusUpdate", "status":"Finish Calibrate"}')
 
                 elif com == 'Q': # calibrate start for exploration.
-                    commsList[ARDUINO].write('Q')
+                    commsList[STM].write('Q')
                     # if msg['from'] == 'Applet':
-                    #     commsList[ARDUINO].write('Q')
-                    # elif msg['from'] == 'Arduino':
+                    #     commsList[STM].write('Q')
+                    # elif msg['from'] == 'STM':
                     #     commsList[APPLET].write('{"com":"statusUpdate", "status":"Finish Calibrate (Right-facing)"}')
 
                 elif com == 'q': # calibrate start for fastest path.
-                    commsList[ARDUINO].write('q')
+                    commsList[STM].write('q')
 
                 elif com == 'RST':
                     exploring = False
@@ -204,7 +199,7 @@ if __name__ == '__main__':
                 ## G, H: EX -> FP transition (from Applet)
                 elif com == 'G':
                     exploring = False
-                    commsList[ARDUINO].write('G')
+                    commsList[STM].write('G')
                     commsList[APPLET].write('{"com":"statusUpdate", "status":"calibrated for FP"}')
                     commsList[ANDROID].write(';{"com":"statusUpdate", "status":"Exploration Complete"}')
 
@@ -228,7 +223,7 @@ if __name__ == '__main__':
 
                 elif com == 'H':
                     exploring = False
-                    commsList[ARDUINO].write('H')
+                    commsList[STM].write('H')
                     commsList[APPLET].write('{"com":"statusUpdate", "status":"calibrated for FP"}')
                     commsList[ANDROID].write(';{"com":"statusUpdate", "status":"Exploration Complete"}')
 
@@ -275,7 +270,7 @@ if __name__ == '__main__':
         print("[MAIN_ERROR] Error. Prepare to shutdown...")
 
     finally:
-        commsList[ARDUINO].disconnect()
+        commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
         commsList[APPLET].disconnect()
         logfile.close()
