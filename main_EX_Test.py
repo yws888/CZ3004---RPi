@@ -75,20 +75,20 @@ if __name__ == '__main__':
             info = msgSplit[2]
 
             ## W, A, D: From Android or Applet
-            if command == 'W1':
+            if command == 'W1|':
                 # Move forward
                 #commsList[STM].write('W')
                 commsList[ANDROID].write('{"com": "statusUpdate", "status": "Moving forward"}')
                 commsList[APPLET].write('received')
 
-            elif command == 'S1':
+            elif command == 'S1|':
                 # Move back
                 #commsList[STM].write('S')
                 commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Moving backward"}')
                 commsList[APPLET].write('received')
 
 
-            elif command == 'B':
+            elif command == 'B|':
                 # break and disconnect
                 continue
 
