@@ -14,6 +14,7 @@ from datetime import datetime
 import argparse
 
 # Run this command via SSH: $ sudo python3 main_EX_Test.py
+# command F to find and decomment  all STM portions before testing with STM
 
 def connect(commsList):
     for comms in commsList:
@@ -45,8 +46,8 @@ if __name__ == '__main__':
     connect(commsList)
 
     #STM = 0
-    ANDROID = 0
-    APPLET = 1
+    ANDROID = 0 # shld be 1
+    APPLET = 1 # shld be 2
 
     msgQueue = Queue()
     #STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
@@ -70,25 +71,30 @@ if __name__ == '__main__':
                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
             msgSplit = message.split(', ')
-            sender = msgSplit[0].split(' > ')[0]
-            receiver = msgSplit[0].split(' > ')[1]
             command = msgSplit[1]
             command = command.rstrip(command[-1])
             command = command.lstrip(command[0])
+
+            sender = msgSplit[0].split(' > ')[0]
+            receiver = msgSplit[0].split(' > ')[1]
             info = msgSplit[2]
 
             ## W, A, D: From Android or Applet
             if command == "W1|":
                 # Move forward
                 #commsList[STM].write('W')
-                commsList[ANDROID].write('{"com": "statusUpdate", "status": "Moving forward"}')
-                commsList[APPLET].write('received')
+                commsList[ANDROID].write('RPi > Android, "{"status":"moving forward"}", Robot is moving forward')
+                commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"forward"}]}", Robot goes forward on the android map')
+
+                #commsList[APPLET].write('received')
 
             elif command == "S1|":
                 # Move back
                 #commsList[STM].write('S')
-                commsList[ANDROID].write(';{"com": "statusUpdate", "status": "Moving backward"}')
-                commsList[APPLET].write('received')
+                commsList[ANDROID].write('RPi > Android, "{"status":"moving backward"}", Robot is moving backward')
+                commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"backward"}]}", Robot goes backward on the android map')
+                #commsList[APPLET].write('received')
+
 
     except Exception as e:
         print("[MAIN_ERROR] Error. Prepare to shutdown...")

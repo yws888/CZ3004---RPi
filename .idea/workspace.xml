@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AndroidComms.py" beforeDir="false" afterPath="$PROJECT_DIR$/AndroidComms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_EX.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_EX.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_EX_Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_EX_Test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -403,5 +402,16 @@
     <MESSAGE value="Added debugging print statements" />
     <MESSAGE value="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object" />
     <option name="LAST_COMMIT_MESSAGE" value="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/AndroidComms.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
