@@ -105,7 +105,7 @@ class AndroidComm(object):
         try:
             dataRcvBytes = self.clientSock.recv(2048) #Buffer is 2048 bytes, returned value is byte stream
             #print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.rstrip())
-            print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.decode('utf-8'))
+#             print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.decode('utf-8'))
             return dataRcvBytes.decode('utf-8')
 
         except BluetoothError as e:
