@@ -82,7 +82,7 @@ if __name__ == '__main__':
             ## W, A, D: From Android or Applet
             if command == "W1|":
                 # Move forward
-                #commsList[STM].write('W')
+                commsList[STM].write('S100')
                 commsList[ANDROID].write('RPi > Android, "{"status":"moving forward"}", Robot is moving forward')
                 commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"forward"}]}", Robot goes forward on the android map')
 
