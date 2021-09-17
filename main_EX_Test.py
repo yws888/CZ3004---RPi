@@ -13,8 +13,12 @@ from copy import deepcopy
 from datetime import datetime
 import argparse
 
-# Run this command via SSH: $ sudo python3 main_EX_Test.py
-# command F to find and decomment  all STM portions before testing with STM
+# Setup to handle cases where serial port jumps to USB1
+# Run this command via SSH: $ sudo python3 main_EX_Test.py --port /dev/ttyUSB1 (ttyUSB0 is the default)
+parser = argparse.ArgumentParser(description='MDP RPi Module')
+parser.add_argument('--port', type=str, default='/dev/ttyUSB0', help='STM Serial port')
+args = parser.parse_args()
+stm_port = args.port
 
 def connect(commsList):
     for comms in commsList:
@@ -40,7 +44,7 @@ if __name__ == '__main__':
 
     ## Initialisation - RPi Comms
     commsList = []
-    commsList.append(STMComm())
+    commsList.append(STMComm(port=stm_port))
     commsList.append(AndroidComm())
     #commsList.append(AppletComm())
     connect(commsList)
@@ -82,7 +86,7 @@ if __name__ == '__main__':
             ## W, A, D: From Android or Applet
             if command == "W1":
                 # Move forward
-                commsList[STM].write('S20\r\n')
+                commsList[STM].write('S20')
                 #commsList[ANDROID].write('RPi > Android, "{"status":"moving forward"}", Robot is moving forward')
 #                 commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"forward"}]}", Robot goes forward on the android map')
                 #commsList[APPLET].write('received')
@@ -90,6 +94,7 @@ if __name__ == '__main__':
             elif command == "R1":
                 # Move back
                 commsList[STM].write('R90\r\n')
+                #commsList[STM].write('R90\r\n')
                 #commsList[ANDROID].write('RPi > Android, "{"status":"turning right"}", Robot is turning right')
                 #commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"backward"}]}", Robot goes backward on the android map')
                 #commsList[APPLET].write('received')

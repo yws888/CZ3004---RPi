@@ -5,8 +5,8 @@ class STMComm(object):
 
     #Initialize the items required for STM Comms
     #can check baud rate and communication port!
-    def __init__(self):
-        self.commPort = '/dev/ttyUSB1' #TOCHECK from Pi on connections
+    def __init__(self, port='/dev/ttyUSB0'):
+        self.commPort = port #TOCHECK from Pi on connections
         self.isEstablished = False
         self.baud = 115200
 
@@ -68,10 +68,8 @@ class STMComm(object):
         try:
             #Make sure there is a connection first before sending
             if self.isEstablished:
+                message = message + '\r\n'
                 self.serialConn.write(str.encode(message))
-#                 message = message.encode('utf-8')
-#                 ser.write(str.encode('Test'))
-#                 self.serialConn.write(message)
                 return
 
             #There is no connections. Send what?
