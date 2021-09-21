@@ -3,8 +3,27 @@
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STMComms.py" beforeDir="false" afterPath="$PROJECT_DIR$/STMComms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_EX_Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_EX_Test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:05:38.826211.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:06:03.428543.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:07:08.315687.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:07:41.143190.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:14:17.733604.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:14:28.952342.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:14:45.217947.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:15:37.901485.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:16:37.480768.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:16:54.483316.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:17:18.203601.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:17:39.836629.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:18:41.470409.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:19:35.152471.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:20:17.761887.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:22:03.169817.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:22:26.422441.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:22:55.466847.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:23:11.156525.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T02:23:33.491237.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/rpi_received_log_2021-09-17T03:04:54.663903.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
