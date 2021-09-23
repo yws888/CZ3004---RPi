@@ -12,6 +12,8 @@ import sys
 from copy import deepcopy
 from datetime import datetime
 import argparse
+from infer import infer 
+
 
 # Setup to handle cases where serial port jumps to USB1
 # Run this command via SSH: $ sudo python3 main_EX_Test.py --port /dev/ttyUSB1 (ttyUSB0 is the default)
@@ -98,6 +100,15 @@ if __name__ == '__main__':
                 #commsList[ANDROID].write('RPi > Android, "{"status":"turning right"}", Robot is turning right')
                 #commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"backward"}]}", Robot goes backward on the android map')
                 #commsList[APPLET].write('received')
+                
+            elif command == "I": #take picture and send to Brandon's laptop for IR
+                response = infer()
+                if response != []:
+                    print(response)
+                    print('iteration: ' + str(_))
+                    for i in range(len(response)):
+                        if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
+                            return ('Done')
 
 
     except Exception as e:
