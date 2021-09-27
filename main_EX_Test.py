@@ -42,27 +42,28 @@ if __name__ == '__main__':
     run_timestamp = datetime.now().isoformat()
     os.makedirs('logs', exist_ok=True)
     logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
-#     os.system("sudo hciconfig hci0 piscan")
+    os.system("sudo hciconfig hci0 piscan")
+    os.system("sudo systemctl start rfcomm")
 
     ## Initialisation - RPi Comms
     commsList = []
-    commsList.append(STMComm(port=stm_port))
+#     commsList.append(STMComm(port=stm_port))
     commsList.append(AndroidComm())
-    #commsList.append(AppletComm())
+    commsList.append(AppletComm())
     connect(commsList)
 
-    STM = 0
-    ANDROID = 1 # shld be 1
-    #APPLET = 2 # shld be 2
+#     STM = 0
+    ANDROID = 0 # shld be 1
+    APPLET = 1 # shld be 2
 
     msgQueue = Queue()
-    STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
+#     STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
-    #appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
+    appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
 
 #     STMListener.start()
     androidListener.start()
-    #appletListener.start()
+    appletListener.start()
 
     try:
         while True:
@@ -88,27 +89,33 @@ if __name__ == '__main__':
             ## W, A, D: From Android or Applet
             if command == "W1":
                 # Move forward
-                commsList[STM].write('S20')
-                #commsList[ANDROID].write('RPi > Android, "{"status":"moving forward"}", Robot is moving forward')
-#                 commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"forward"}]}", Robot goes forward on the android map')
-                #commsList[APPLET].write('received')
+                #commsList[STM].write('S20')
+                commsList[ANDROID].write('RPi > Android, "{"status":"moving forward"}", Robot is moving forward\n')
+                commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"forward"}]}", Robot goes forward on the android map')
+                commsList[APPLET].write('W1 received')
 
-            elif command == "R1":
-                # Move back
-                commsList[STM].write('R90\r\n')
-                #commsList[STM].write('R90\r\n')
-                #commsList[ANDROID].write('RPi > Android, "{"status":"turning right"}", Robot is turning right')
-                #commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"backward"}]}", Robot goes backward on the android map')
-                #commsList[APPLET].write('received')
-                
-            elif command == "I": #take picture and send to Brandon's laptop for IR
-                response = infer()
-                if response != []:
-                    print(response)
-                    print('iteration: ' + str(_))
-                    for i in range(len(response)):
-                        if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
-                            return ('Done')
+            elif command == "D90":
+                # turn right
+                #commsList[STM].write('D90\r\n')
+                commsList[ANDROID].write('RPi > Android, "{"status":"turning right"}", Robot is turning right')
+                commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"right"}]}", Robot goes backward on the android map')
+                commsList[APPLET].write('D90 received')
+            
+            elif command == "A90":
+                # turn right
+                #commsList[STM].write('A90\r\n')
+                commsList[ANDROID].write('RPi > Android, "{"status":"turning left"}", Robot is turning right')
+                commsList[ANDROID].write('RPi > Android, "{"move":[{"direction":"left"}]}", Robot goes backward on the android map')
+                commsList[APPLET].write('A90 received')
+            
+#             elif command == "I": #take picture and send to Brandon's laptop for IR
+#                 response = infer()
+#                 if response != []:
+#                     print(response)
+#                     print('iteration: ' + str(_))
+#                     for i in range(len(response)):
+#                         if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
+#                             return ('Done')
 
 
     except Exception as e:

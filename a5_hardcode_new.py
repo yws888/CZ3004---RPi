@@ -5,28 +5,14 @@ from time import sleep
 # from multiprocessing import Process, Value, Queue, Manager
 from infer import infer 
 
-# def STMConnect():
-print('Initializing Connections:')
-ser = serial.Serial(
-    port='/dev/ttyUSB0',
-    baudrate=115200,
-)
-print("initialize STMController successful")
-print("Writing command")
-
-not_recognized = True
-count = 1
-while not_recognized:
-#     ser.write(str.encode('L90\r\n'))
-    ser.write(str.encode('D90\r\n'))
-    response = infer()
-    if response != []:
-        print(response)
-        print('iteration: ' + count)
-        for i in range(len(response)):
-            if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
-                not_recognized = False
-
+def STMConnect():
+	print('Initializing Connections:')
+	ser = serial.Serial(
+		port='/dev/ttyUSB0',
+		baudrate=115200,
+	)
+	print("initialize STMController successful")
+	print("Writing command")
 
      # ser.write(str.encode('Test'))
 # W - up
@@ -41,6 +27,20 @@ while not_recognized:
 #     sleep(5)
    
     #take pic to detect face? if no face, then:
+
+#     ser.write(str.encode('L90\r\n'))
+	not_recognized = True
+	while not_recognized:
+		response = infer()
+		if response:
+			print(response)
+			for obj in response:
+				if obj["image_id"] != '0': #shouldnt it be ==
+					not_recognized = False
+					break
+		if not_recognized:
+			ser.write(str.encode('D96\r\n'))
+			sleep(3)
 #         sleep(5)
     
 #     sleep(5)
@@ -73,8 +73,8 @@ while not_recognized:
 #     ser.write(str.encode('D90\r\n'))
     # ser.write(b'Test')
 
-# if __name__ == '__main__':
-# 	STMConnect()
+if __name__ == '__main__':
+	print(STMConnect())
 
 
 
