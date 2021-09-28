@@ -2,6 +2,7 @@
 
 import time
 import socket
+import traceback
 from bluetooth import *
 
 class AndroidComm(object):
@@ -25,7 +26,7 @@ class AndroidComm(object):
                 #self.serverSock = BluetoothSocket(3)
                 self.serverSock = BluetoothSocket(RFCOMM)
                 self.serverSock.bind(('', RFCOMMChannel)) #Can try bluetooth.PORT_ANY or RFCOMMChannel also
-                self.serverSock.listen(RFCOMMChannel) #Specify how many clients the thing will wait for
+                self.serverSock.listen(1) #was RFCOMMChannel; Specify how many clients the thing will wait for
                 self.port = self.serverSock.getsockname()[1] #Value returned is [host, port]. We need port
 
                 uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
@@ -46,8 +47,10 @@ class AndroidComm(object):
                 retry = False
 
             #Exception Handling
-            except Exception as e:
-                print('[BLUETOOTH_ERROR] Bluetooth Connection Error: %s' % str(e))
+#             except Exception as e:
+#                 print('[BLUETOOTH_ERROR] Bluetooth Connection Error: %s' % str(e))
+            except:
+                print(traceback.format_exc())
                 retry = True
 
             #When established, break the while(true)
@@ -104,9 +107,10 @@ class AndroidComm(object):
     def read(self):
         try:
             dataRcvBytes = self.clientSock.recv(2048) #Buffer is 2048 bytes, returned value is byte stream
+            if (dataRcvBytes):
             #print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.rstrip())
-            print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.decode('utf-8'))
-            return dataRcvBytes.decode('utf-8')
+                print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.decode('utf-8'))
+                return dataRcvBytes.decode('utf-8')
 
         except BluetoothError as e:
             print('[BLUETOOTH_ERROR] Receiving Error: %s' % str(e))

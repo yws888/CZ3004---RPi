@@ -1,12 +1,15 @@
 import serial
 import time
+import subprocess
+import traceback
+from time import sleep
 
 class STMComm(object):
 
     #Initialize the items required for STM Comms
     #can check baud rate and communication port!
-    def __init__(self, port='/dev/ttyUSB0'):
-        self.commPort = port #TOCHECK from Pi on connections
+    def __init__(self):
+        self.commPort = subprocess.check_output('ls /dev/ttyUSB*',shell=True).decode('utf-8').strip('\n')
         self.isEstablished = False
         self.baud = 115200
 
@@ -19,7 +22,7 @@ class STMComm(object):
             retry = False
             try:
                 #Let's wait for connection
-                print ('[STM_INFO] Waiting for serial connection from STM')
+                print ('[STM_INFO] Initializing Connection with STM')
 
                 self.serialConn = serial.Serial(self.commPort, self.baud, timeout=0.1)
                 print('[STM_ACCEPTED] Connected to STM.')
@@ -36,7 +39,7 @@ class STMComm(object):
 
             #When not yet established, keep retrying
             print('[STM_INFO] Retrying STM Establishment')
-            time.sleep(1)
+            time.sleep(5)
 
     #Disconnect when done
     def disconnect(self):
@@ -48,16 +51,17 @@ class STMComm(object):
     #The fundamental trying to receive
     def read(self):
         try:
-            readData = self.serialConn.readline()
-            self.serialConn.flush() #Clean the pipe
-            readData = readData.decode('utf-8')
-            if readData == '':
-                return None
-            print('[STM_INFO] Received: ' + readData)
-            return readData
+            readData = self.serialConn.readline().strip().decode('utf-8')
+#             sleep(0.005)
+#             self.serialConn.flush() #Clean the pipe
+            #readData = readData.decode('utf-8')
+            if (readData):
+                print('[STM_INFO] Received: ' + readData)
+                return readData
 
         except Exception as e:
-            print('[STM_ERROR] Receiving Error: %s' % str(e))
+            print(traceback.format_exc())
+#             print('[STM_ERROR] Receiving Error: %s' % str(e))
             if ('Input/output error' in str(e)):
                 self.disconnect()
                 print('[STM_INFO] Re-establishing STM Connection.')

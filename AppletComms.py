@@ -7,7 +7,7 @@ class AppletComm(object):
     def __init__(self):
         self.ipAddress = '192.168.3.1' #IP Address of the RPi
         self.isEstablished = False
-        self.portNum = 8080  #36126, Ephemeral Port, configure on Applet too
+        self.portNum = 8080  #36126, 8080 Ephemeral Port, configure on Applet too
         self.client = None
         self.connection = None
 
@@ -43,7 +43,7 @@ class AppletComm(object):
 
             #When not yet established, keep retrying
             print('[APPLET_INFO] Retrying Applet Connection')
-            time.sleep(1)
+            time.sleep(5)
 
     #Disconnect when done
     def disconnect(self):
