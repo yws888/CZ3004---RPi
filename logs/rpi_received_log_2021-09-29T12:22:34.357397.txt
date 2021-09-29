@@ -1,0 +1,1 @@
+{"obstacle":[{"x":6,"y":5,"face":"none"},{"x":7,"y":5,"face":"none"},{"x":8,"y":5,"face":"none"},{"x":9,"y":5,"face":"none"},{"x":10,"y":5,"face":"none"},{"x":11,"y":5,"face":"none"}],"command":"obstacle"}{"mode":"manual","command":"auto"}{"mode":"racecar","command":"auto"}

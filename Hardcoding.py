@@ -6,6 +6,7 @@ from time import sleep
 from get_sim import get_string
 from STMComms import STMComm
 import subprocess
+import sys
 
 from multiprocessing import Process, Queue
 
@@ -67,8 +68,8 @@ def STMTest():
     STMListener = Process(target=listen, args=(msgQueue, ser))
     STMListener.start()
 
-#     response = getCommands()
-    response = ['W10', 'D17', 'W70', 'A6', 'W20', 'A11', 'W10', 'S40', 'C11', 'S10', 'A6', 'Z6', 'D6', 'Z6', 'D6', 'A6', 'W10', 'A17', 'C11', 'W30', 'A6', 'W50', 'D11', 'W10', 'D6', 'W10', 'D11', 'Z11', 'D6', 'W60', 'A6', 'W10', 'A6', 'W10', 'A17']
+    response = getCommands()
+#     response = ['W10', 'D17', 'W70', 'A6', 'W20', 'A11', 'W10', 'S40', 'C11', 'S10', 'A6', 'Z6', 'D6', 'Z6', 'D6', 'A6', 'W10', 'A17', 'C11', 'W30', 'A6', 'W50', 'D11', 'W10', 'D6', 'W10', 'D11', 'Z11', 'D6', 'W60', 'A6', 'W10', 'A6', 'W10', 'A17']
     print(response)
 #     ser.write('start')
     for command in response:
@@ -88,6 +89,7 @@ def STMTest():
                     break
             except:
                 sys.exit(0)
+    sys.exit(0)
 
 #     sleep(5)
 #     ser.write(str.encode('W0\r\n')) #straight

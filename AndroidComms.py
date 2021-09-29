@@ -59,7 +59,7 @@ class AndroidComm(object):
 
             #When not yet established, keep retrying
             print('[BLUETOOTH_INFO] Retrying Bluetooth Establishment')
-            time.sleep(10)
+            time.sleep(5)
 
     #We need to shutdown any disconnected connections
     def disconnect(self):
@@ -106,7 +106,7 @@ class AndroidComm(object):
     #The fundamental trying to receive
     def read(self):
         try:
-            dataRcvBytes = self.clientSock.recv(2048) #Buffer is 2048 bytes, returned value is byte stream
+            dataRcvBytes = self.clientSock.recv(4096) #Buffer is 2048 bytes, returned value is byte stream
             if (dataRcvBytes):
             #print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.rstrip())
                 print('[BLUETOOTH_INFO] Received: ' + dataRcvBytes.decode('utf-8'))

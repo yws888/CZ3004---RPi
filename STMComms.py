@@ -60,8 +60,7 @@ class STMComm(object):
                 return readData
 
         except Exception as e:
-            print(traceback.format_exc())
-#             print('[STM_ERROR] Receiving Error: %s' % str(e))
+            print('[STM_ERROR] Receiving Error: %s' % str(e))
             if ('Input/output error' in str(e)):
                 self.disconnect()
                 print('[STM_INFO] Re-establishing STM Connection.')

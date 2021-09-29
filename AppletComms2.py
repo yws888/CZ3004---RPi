@@ -1,13 +1,15 @@
 import time
 import socket
+import requests
+import json
 
 class AppletComm(object):
 
     #Initialize the items required for IP Comms
     def __init__(self):
-        self.ipAddress = '192.168.3.1' #IP Address of the RPi
+        self.ipAddress = '192.168.3.20' #IP Address of the RPi
         self.isEstablished = False
-        self.portNum = 36126  #36126, 8080 Ephemeral Port, configure on Applet too
+        self.portNum = 5000  #36126, 8080 Ephemeral Port, configure on Applet too
         self.client = None
         self.connection = None
 
@@ -19,20 +21,11 @@ class AppletComm(object):
         while True:
             retry = False
             try:
-                os.system('lsof -t -i:36126 | xargs kill')
-                #Let's wait for connection
-                print ('[APPLET_INFO] Waiting for socket connection from Applet on {0}, port {1}'.format(self.ipAddress, self.portNum))
-                self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #self.connection.setblocking(0)
-                #self.connection.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, 1)
-                self.connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                self.connection.bind((self.ipAddress, self.portNum))
-                self.connection.listen(1)
-                #self.connection.setblocking(0)
-                (self.client, self.clientAddr) = self.connection.accept() #Client is the socket to transmit
-                print('[APPLET_ACCEPTED] Connected to Applet.')
-                self.isEstablished = True
-                retry = False
+                resp = requests.post("http://192.168.3.20:5000/simulate")
+                if (resp):
+                    print('[APPLET_ACCEPTED] Connected to Applet.')
+                    self.isEstablished = True
+                    retry = False
 
             except Exception as e:
                 print('[APPLET_ERROR] Applet Connection Error: %s' % str(e))
@@ -47,19 +40,6 @@ class AppletComm(object):
             self.connection.close()
             time.sleep(5)
 
-    #Disconnect when done
-    def disconnect(self):
-        if not (self.client is None):
-            print('[APPLET_CLOSE] Shutting down Applet Connection')
-            self.client.close()
-            print('[APPLET_CLOSE] Applet Connection Shut Down Successfully')
-
-        if not (self.connection is None):
-            print('[APPLET_CLOSE] Shutting down RPi Connection')
-            self.connection.close()
-            print('[APPLET_CLOSE] RPi Connection Shut Down Successfully')
-
-        self.isEstablished = False
 
     #The fundamental trying to receive
     def read(self):
@@ -88,13 +68,16 @@ class AppletComm(object):
                 self.connect()
             '''
     #The fundamental trying to send
+#             /test_conn (GET)
     def write(self, message):
         try:
             #Make sure there is a connection first before sending
             if (self.isEstablished):
-                message = message + "\n"
-                self.client.send(message.encode('utf-8')) #self.clientAddr)
-                return
+#                 message = json.loads(message)
+                print('writing this to Algo: ' + message)
+                resp = requests.post("http://192.168.3.20:5000/simulate", json = {'message': message})
+                print(resp.json())
+                return 
 
             #There is no connections. Send what?
             else:
