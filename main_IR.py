@@ -20,15 +20,6 @@ import cv2
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 
-# (Thanks Kaishuo!) Setup to handle cases where serial port jumps to ACM1
-# Run this command via SSH: $ sudo python3 main_IR.py --port /dev/ttyACM0 (or ttyACM1 - check with ls /dev/ttyACM*)
-parser = argparse.ArgumentParser(description='MDP RPi Module')
-parser.add_argument('--port', type=str,
-                    default='/dev/ttyACM0', help='Arduino Serial port')
-args = parser.parse_args()
-arduino_port = args.port
-
-
 def connect(commsList):
     for comms in commsList:
         comms.connect()

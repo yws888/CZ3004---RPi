@@ -40,8 +40,9 @@ class AppletComm(object):
             self.connection.close()
             time.sleep(5)
 
-
+    #read() not used if Flask server is used
     #The fundamental trying to receive
+
     def read(self):
         try:
             dataRcvBytes = self.client.recv(2048) #Buffer is 2048 bytes, returned value is byte stream
@@ -76,8 +77,8 @@ class AppletComm(object):
 #                 message = json.loads(message)
                 print('writing this to Algo: ' + message)
                 resp = requests.post("http://192.168.3.20:5000/simulate", json = {'message': message})
-                print(resp.json())
-                return 
+                print('received: ' + resp.json())
+                return resp
 
             #There is no connections. Send what?
             else:
