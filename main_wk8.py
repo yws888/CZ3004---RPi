@@ -63,11 +63,16 @@ if __name__ == '__main__':
 #     appletListener.start()
 #     commsList[STM].write('dummy\r\n')
 
+    received = True
+
     try:
         while True:
             message = msgQueue.get()
             
             if message == None:
+                continue
+            elif message == 'A': #receipt from STM
+                received = True
                 continue
             
             response = json.loads(message)
@@ -78,24 +83,29 @@ if __name__ == '__main__':
             except Exception as e:
                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
             
-            if command == 'move':
+            if command == 'move' and received == True: #check if STM always sends received after every movement
                 cmd = response['direction']
                 if cmd == 'W': #from android
                     commsList[STM].write('W30')
                     commsList[ANDROID].write('{"status":"moving forward"}')
+                    received = False
                 elif cmd == 'S':
                     commsList[STM].write('S30')
                     commsList[ANDROID].write('{"status":"moving back"}')
+                    received = False
                 elif cmd == 'D':
                     commsList[STM].write('D90')
                     commsList[ANDROID].write('{"status":"turning right"}')
+                    received = False
                 elif cmd == 'A':
                     commsList[STM].write('A90')
                     commsList[ANDROID].write('{"status":"turning left"}')
+                    received = False
                 else:
                     commsList[STM].write(str(response['direction']))
                     #commsList[ANDROID].write('{"status":"robot moving"}')
                     commsList[ANDROID].write('{ "robot": {x:x,y:y, angle:angle} }') #update after each mvmt based on algo commands
+                    received = False
 
             elif command == 'obstacle': #receiving obstacle coordinates and info from Android
                 obstacles = response['obstacle']

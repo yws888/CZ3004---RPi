@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AppletComms2.py" beforeDir="false" afterPath="$PROJECT_DIR$/AppletComms2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_IR.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_IR.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_wk8.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk8.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
