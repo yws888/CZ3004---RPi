@@ -90,9 +90,11 @@ class AndroidComm(object):
         try:
             #Make sure there is a connection first before sending
             if (self.isEstablished):
-                #self.clientSock.send(str(message))
-                # print('[BLUETOOTH_INFO] Sent: ' + message)
+#                 self.clientSock.send(str(message))
+#                 print('[BLUETOOTH_INFO] Sent: ' + message)
+#                 print('reached')
                 self.clientSock.send(message.encode('utf-8'))
+                print('written to Android: ' + message )
                 return
 
             #There is no connections. Send what?

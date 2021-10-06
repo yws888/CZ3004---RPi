@@ -43,24 +43,23 @@ if __name__ == '__main__':
     ## Initialisation - RPi Comms
     commsList = []
     commsList.append(STMComm())
-#     commsList.append(AndroidComm())
+    commsList.append(AndroidComm())
 #     commsList.append(AppletComm())
 
     connect(commsList)
 
     STM = 0
-#     ANDROID = 1 # shld be 1
+    ANDROID = 1 # shld be 1
 #     APPLET = 2 # shld be 2
 
     msgQueue = Queue()
     STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
-#     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
+    androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
 #     appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
 
     STMListener.start()
-#     androidListener.start()
+    androidListener.start()
 #     appletListener.start()
-#     commsList[STM].write('dummy\r\n')
 
     algoCommands = []
     received = True
@@ -79,11 +78,6 @@ if __name__ == '__main__':
             
             response = json.loads(message)
             command = response['command']
-            
-#             try:
-#                 logfile.write(message)
-#             except Exception as e:
-#                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
             
             if command == 'move' and received == True: #check if STM always sends received after every movement
                 cmd = response['direction']
