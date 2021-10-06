@@ -63,6 +63,7 @@ if __name__ == '__main__':
 #     appletListener.start()
 #     commsList[STM].write('dummy\r\n')
 
+    algoCommands = []
     received = True
 
     try:
@@ -73,6 +74,7 @@ if __name__ == '__main__':
                 continue
             elif message == 'A': #receipt from STM
                 received = True
+                msgQueue.put(algoCommands.pop(0))
                 continue
             
             response = json.loads(message)
@@ -116,12 +118,12 @@ if __name__ == '__main__':
                 #TODO
             
             elif command == 'auto': #start button pressed from Android
-                mode = response['mode']
-                print('mode: ' + mode)
-                print('retrieving info from Algo')
+                print('mode: ' + response['mode'])
+                if response['mode'] == 'obstacle':
+                    print('retrieving info from Algo')
                 #print('starting Robot movement for IR')
-                mode=str(mode)
-                algoResponse = commsList[APPLET].write(mode)
+                    # mode=str(mode)
+                    algoResponse = commsList[APPLET].write(mode)
                 #insert code for handling algoResponse here
 
 
