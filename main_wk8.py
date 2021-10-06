@@ -127,6 +127,13 @@ if __name__ == '__main__':
                 #insert code for handling algoResponse here
 
 
+                if response['mode'] == 'racecar':
+
+                    response['coordinates']['x'] = '3'
+                    response['coordinates']['y'] = '3'
+                    image_id = '2'
+                    commsList[ANDROID].write('{"image":{"x":' + response['coordinates']['x'] + ',"y": ' + response['coordinates']['y'] + ', "imageID": ' + image_id + '}}')
+
             elif command == "picture": #take picture and send to laptop for IR; ideally x, y coordinates of obstacle should be in the response json too
 
                 irResponse = infer()
@@ -134,6 +141,7 @@ if __name__ == '__main__':
                     print(irResponse)
                     for i in range(len(irResponse)):
                         # if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
+
                         print(i)
                         image_id = irResponse[i]["image_id"]
                         commsList[ANDROID].write('{"image":{"x":' + response['coordinates']['x'] + ',"y": ' + response['coordinates']['y'] + ', "imageID": ' + image_id + '}}')

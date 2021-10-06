@@ -5,11 +5,11 @@ from time import sleep
 # from infer import infer
 from get_sim import get_string
 from STMComms import STMComm
+from AndroidComms import AndroidComm
 import subprocess
 import sys
 
 from multiprocessing import Process, Queue
-
 
 def ImageRec():
     print('Initializing Connections:')
