@@ -4,7 +4,7 @@ import time
 
 from STMComms import STMComm
 from AndroidComms import AndroidComm
-# from AppletComms2 import AppletComm
+from AppletComms import AppletComm
 
 import traceback
 import os
@@ -31,31 +31,31 @@ def listen(msgQueue, com):
 
 if __name__ == '__main__':
     ## Set up message logs
-    run_timestamp = datetime.now().isoformat()
-    # os.makedirs('logs', exist_ok=True)
-    logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
+    # run_timestamp = datetime.now().isoformat()
+    # # os.makedirs('logs', exist_ok=True)
+    # logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
     os.system("sudo hciconfig hci0 piscan")
 
     ## Initialisation - RPi Comms
     commsList = []
-    commsList.append(STMComm())
+    commsList.append(AppletComm())
+    # commsList.append(STMComm())
     commsList.append(AndroidComm())
-#     commsList.append(AppletComm())
 
     connect(commsList)
 
-    STM = 0
+    APPLET = 0
     ANDROID = 1 # shld be 1
-#     APPLET = 2 # shld be 2
+#     STM = 2 # shld be 2
 
     msgQueue = Queue()
-    STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
+    # STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
-#     appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
+    appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
 
-    STMListener.start()
+    # STMListener.start()
     androidListener.start()
-#     appletListener.start()
+    appletListener.start()
 
     turning_commands = turning_cmds
     received = True #for STM acknowledgment
@@ -96,7 +96,6 @@ if __name__ == '__main__':
                     lastcommand = {"command": "move", "direction": 'W'}
                 #note fwd dist is between 50 - 200 cm
                 continue
-                #see if can repeat the command if
             elif message.isdigit() or (message.startswith('-') and message[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
@@ -105,17 +104,12 @@ if __name__ == '__main__':
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
-                #     #execute turn sequence by adding commands from list, maybe read from text file, or use a harcoded list
+                #     execute turn sequence by adding commands from list
                 continue
             else:
                 if timeSinceLastCommand > 10:
                     msgQueue.put(lastcommand)
                     continue
-
-            try:
-                logfile.write(str(message))
-            except Exception as e:
-                print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
             if isinstance(message, str) and message != 'A' and (not message.isdigit()): #from Android
                 response = json.loads(message)
@@ -127,21 +121,22 @@ if __name__ == '__main__':
             if command == 'move' and received == True: #check if STM always sends received after every movement
                 cmd = response['direction']
                 if cmd == 'W': #from android
-                    commsList[STM].write('W30') #just change the movement here only
+                    commsList[APPLET].write('W30') #just change the movement here only
                     commsList[ANDROID].write('{"status":"moving forward"}')
                     #change the coordinates accordingly
                 elif cmd == 'S':
-                    commsList[STM].write('S30')
+                    commsList[APPLET].write('S30')
                     commsList[ANDROID].write('{"status":"moving back"}')
                 elif cmd == 'D':
-                    commsList[STM].write('D90')
+                    commsList[APPLET].write('D90')
                     commsList[ANDROID].write('{"status":"turning right"}')
                 elif cmd == 'A':
-                    commsList[STM].write('A90')
+                    commsList[APPLET].write('A90')
                     commsList[ANDROID].write('{"status":"turning left"}')
                 else:
-                    commsList[STM].write(str(response['direction']))
-                    commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
+                    commsList[APPLET].write(str(response['direction']))
+                    commsList[ANDROID].write('{"command": ' + str(response['direction']) + '}')
+                    #commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
 
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
@@ -158,8 +153,6 @@ if __name__ == '__main__':
         # print("[MAIN_ERROR] Error. Prepare to shutdown")
 
     finally:
-        commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
-#         commsList[APPLET].disconnect()
-        logfile.close()
+        commsList[APPLET].disconnect()
         sys.exit(0)

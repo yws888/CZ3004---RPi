@@ -1,5 +1,6 @@
 from multiprocessing import Process, Queue
 from time import sleep
+import time
 
 from STMComms import STMComm
 from AndroidComms import AndroidComm
@@ -9,15 +10,13 @@ import numpy as np
 import os
 import json
 import sys
-from copy import deepcopy
 from datetime import datetime
 import argparse
 import requests
 import traceback
 
-
 from infer import infer
-
+from generate_stitched import generate_stitched
 
 def connect(commsList):
     for comms in commsList:
@@ -67,15 +66,22 @@ if __name__ == '__main__':
     algoCommands = []
     received = True
     running = True
-
+    timeSinceLastCommand = 0
+    lastTick = time.time()
     try:
         while running:
             message = msgQueue.get()
+
+            currTick = time.time()
+            timeSinceLastCommand += currTick - lastTick
+            lastTick = currTick
+
             if message == None:
                 continue
             elif message == 'A': #receipt from STM
                 print('A received')
                 received = True
+                timeSinceLastCommand = 0
 #                 print(msgQueue.qsize())
 #                 if (not algoCommands) and (not msgQueue.empty()):
                 print(algoCommands)
@@ -86,6 +92,8 @@ if __name__ == '__main__':
                     print('popped')
                 continue
             else:
+                if timeSinceLastCommand > 10:
+                    pass
                 pass
             #if 10 seconds never receive anything, resend again            
                         
@@ -118,7 +126,7 @@ if __name__ == '__main__':
                     commsList[STM].write(str(cmd))
 #                     commsList[ANDROID].write('{"status":"robot moving"}')
                     temp=str(int(response["end_state"][2]))
-                    commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(response["end_state"][2])+'} }')
+                    commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
                     #update after each mvmt based on algo commands
                     received = False
 
@@ -170,12 +178,19 @@ if __name__ == '__main__':
                 elif response['mode'] == 'racecar':
                     continue
 
-            elif command == "picture": #take picture and send to laptop for IR; ideally x, y coordinates of obstacle should be in the response json too
-#                coordinates = send to 
+            elif command == "picture":
                 d = {}
                 d['x']=response['coordinates'][0]
                 d['y']=response['coordinates'][1]
                 irResponse = infer(d)
+
+                if irResponse == []:
+                    # Run inference again
+                    commsList[STM].write('S15')
+                    # while msgQueue.get() != 'A':
+                        # pass
+                    sleep(1)
+                    irResponse = infer(d)
 
                 if irResponse != []:
                     print(irResponse)
@@ -188,9 +203,6 @@ if __name__ == '__main__':
                 if (len(algoCommands)!=0):
                     msgQueue.put(algoCommands.pop(0))
 
-                else:
-                    commsList[STM].write('S15')
-                    #add code to take pic again
     
     except Exception as e:
 #         print(e)
@@ -200,6 +212,7 @@ if __name__ == '__main__':
     finally:
         commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
+        generate_stitched()
 #         commsList[APPLET].disconnect()
 #         logfile.close()
         sys.exit(0)

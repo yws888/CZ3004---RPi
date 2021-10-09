@@ -2,8 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
+      <change afterPath="$PROJECT_DIR$/formatCommands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/A5_hardcoding.py.save" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AndroidComms.py" beforeDir="false" afterPath="$PROJECT_DIR$/AndroidComms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AppletComms.py" beforeDir="false" afterPath="$PROJECT_DIR$/AppletComms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Hardcoding.py" beforeDir="false" afterPath="$PROJECT_DIR$/Hardcoding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/a5_hardcode_new.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hctest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/infer_print.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_EX_Test.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main_wk8.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk8.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_wk8_old.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk8_changes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_wk9.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk9.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_input.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +59,7 @@
       <recent name="C:\Personal materials\NTU materials\Year 3\CZ3004 - FAKKYU (MDP)\RPi_v2" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.directory">
+  <component name="RunManager" selected="Python.formatCommands">
     <configuration name="directory" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MDP RPi - New" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -60,6 +74,27 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/directory.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="formatCommands" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="MDP RPi - New" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/formatCommands.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -92,6 +127,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.formatCommands" />
         <item itemvalue="Python.directory" />
         <item itemvalue="Python.imgRaw" />
       </list>

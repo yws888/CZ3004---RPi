@@ -4,6 +4,7 @@ import time
 import socket
 import traceback
 from bluetooth import *
+import os
 
 class AndroidComm(object):
     
@@ -24,6 +25,7 @@ class AndroidComm(object):
             retry = False
             try:
                 #self.serverSock = BluetoothSocket(3)
+                #os.system('lsof -t -i:36126 | xargs kill')
                 self.serverSock = BluetoothSocket(RFCOMM)
                 self.serverSock.bind(('', RFCOMMChannel)) #Can try bluetooth.PORT_ANY or RFCOMMChannel also
                 self.serverSock.listen(1) #was RFCOMMChannel; Specify how many clients the thing will wait for
