@@ -103,6 +103,7 @@ class AndroidComm(object):
                 return
 
         except BluetoothError as e:
+            print(traceback.format_exc())
             print('[BLUETOOTH_ERROR] Cannot send message: %s' % str(e))
 
     #The fundamental trying to receive

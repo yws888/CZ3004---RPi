@@ -21,7 +21,7 @@ class AppletComm(object):
         while True:
             retry = False
             try:
-                resp = requests.post("http://192.168.3.20:5000/simulate")
+                resp = requests.post("http://192.168.3.20:5000/test_conn")
                 if (resp):
                     print('[APPLET_ACCEPTED] Connected to Applet.')
                     self.isEstablished = True
@@ -76,8 +76,10 @@ class AppletComm(object):
             if (self.isEstablished):
 #                 message = json.loads(message)
                 print('writing this to Algo: ' + message)
+                #message = json.loads(message)
+    
                 resp = requests.post("http://192.168.3.20:5000/simulate", json = {'message': message})
-                print('received: ' + resp.json())
+                print(resp)
                 return resp
 
             #There is no connections. Send what?

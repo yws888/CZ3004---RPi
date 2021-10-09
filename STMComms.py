@@ -51,9 +51,9 @@ class STMComm(object):
     #The fundamental trying to receive
     def read(self):
         try:
-            readData = self.serialConn.readline().strip().decode('utf-8')
+            readData = self.serialConn.readline().decode('utf-8')
 #             sleep(0.005)
-#             self.serialConn.flush() #Clean the pipe
+            self.serialConn.flush() #Clean the pipe
             #readData = readData.decode('utf-8')
             if (readData):
                 print('[STM_INFO] Received: ' + readData)
@@ -73,6 +73,7 @@ class STMComm(object):
             if self.isEstablished:
                 message = message + '\r\n'
                 self.serialConn.write(str.encode(message))
+                print('writing to STM: ' + message)
                 return
 
             #There is no connections. Send what?
