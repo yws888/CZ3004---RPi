@@ -69,7 +69,7 @@ if __name__ == '__main__':
     lastTick = time.time()
     lastcommand = None
 
-    commsList[APPLET].write('W30') #just change the movement here only
+    commsList[APPLET].write('W') #just change the movement here only
 
     try:
         while running:
@@ -86,8 +86,9 @@ if __name__ == '__main__':
                 print('ack received')
                 timeSinceLastCommand = 0
 
-                if first_ack:
+                if first_ack: #for initial STM write
                     first_ack = False
+                    continue
                 elif turning:
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -97,20 +98,22 @@ if __name__ == '__main__':
                 else:
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
+#                     received = False
                 #note fwd dist is between 50 - 200 cm
                 continue
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
 
-                if sensor_value == 20: #condition to check; indicates when to turn
+                if sensor_value == 20 and forward == True: #condition to check; indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                 #     execute turn sequence by adding commands from list
-                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark)
-                    while not msgQueue.empty():
-                        msgQueue.get()
+                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                    sys.exit(0)
+                else:
+                    pass
 
                 continue
             else:
