@@ -100,11 +100,15 @@ if __name__ == '__main__':
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
 
-                if sensor_value == 20: #condition to check
+                if sensor_value == 20: #condition to check; indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                 #     execute turn sequence by adding commands from list
+                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark)
+                    while not msgQueue.empty():
+                        msgQueue.get()
+
                 continue
             else:
                 if timeSinceLastCommand > 10:
