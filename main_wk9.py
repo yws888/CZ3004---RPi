@@ -4,7 +4,6 @@ import time
 
 from STMComms import STMComm
 from AndroidComms import AndroidComm
-# from AppletComms2 import AppletComm
 
 import traceback
 import os
@@ -40,22 +39,18 @@ if __name__ == '__main__':
     commsList = []
     commsList.append(STMComm())
     commsList.append(AndroidComm())
-#     commsList.append(AppletComm())
 
     connect(commsList)
 
     STM = 0
     ANDROID = 1 # shld be 1
-#     APPLET = 2 # shld be 2
 
     msgQueue = Queue()
     STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
-#     appletListener = Process(target=listen, args=(msgQueue, commsList[APPLET]))
 
     STMListener.start()
     androidListener.start()
-#     appletListener.start()
 
     turning_commands = turning_cmds
     received = True #for STM acknowledgment
@@ -67,7 +62,9 @@ if __name__ == '__main__':
     timeSinceLastCommand = 0
     lastTick = time.time()
     lastcommand = None
-    
+    commsList[STM].write('W') #the first write to trigger first_ack
+
+
     try:
         while running:
             message = msgQueue.get()
@@ -97,7 +94,7 @@ if __name__ == '__main__':
                 #note fwd dist is between 50 - 200 cm
                 continue
                 #see if can repeat the command if
-            elif message.isdigit() or (message.startswith('-') and message[1:].isdigit()): #STM sensor value
+            elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
 
@@ -117,11 +114,11 @@ if __name__ == '__main__':
             except Exception as e:
                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
-            if isinstance(message, str) and message != 'A' and (not message.isdigit()): #from Android
+            if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
             else:
                 response = message
-            print(type(response))
+            # print(type(response))
             command = response["command"]
             
             if command == 'move' and received == True: #check if STM always sends received after every movement
@@ -160,6 +157,5 @@ if __name__ == '__main__':
     finally:
         commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
-#         commsList[APPLET].disconnect()
         logfile.close()
         sys.exit(0)

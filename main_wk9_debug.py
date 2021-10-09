@@ -68,7 +68,9 @@ if __name__ == '__main__':
     timeSinceLastCommand = 0
     lastTick = time.time()
     lastcommand = None
-    
+
+    commsList[APPLET].write('W30') #just change the movement here only
+
     try:
         while running:
             message = msgQueue.get()

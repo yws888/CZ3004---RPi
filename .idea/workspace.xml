@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_wk9.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk9.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_wk9_debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk9_debug.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,7 +46,28 @@
       <recent name="C:\Personal materials\NTU materials\Year 3\CZ3004 - FAKKYU (MDP)\RPi_v2" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.formatCommands">
+  <component name="RunManager" selected="Python.client">
+    <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="RPi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/bin/python3.9" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/clientserver" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/clientserver/client.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="directory" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MDP RPi - New" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -111,8 +133,15 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.client" />
+      <item itemvalue="Python.directory" />
+      <item itemvalue="Python.formatCommands" />
+      <item itemvalue="Python.imgRaw" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.client" />
         <item itemvalue="Python.formatCommands" />
         <item itemvalue="Python.directory" />
         <item itemvalue="Python.imgRaw" />
