@@ -24,7 +24,7 @@ class STMComm(object):
                 #Let's wait for connection
                 print ('[STM_INFO] Initializing Connection with STM')
 
-                self.serialConn = serial.Serial(self.commPort, self.baud, timeout=0.1)
+                self.serialConn = serial.Serial(self.commPort, self.baud) #timeout was formerly 0.1
                 print('[STM_ACCEPTED] Connected to STM.')
                 self.isEstablished = True
                 retry = False

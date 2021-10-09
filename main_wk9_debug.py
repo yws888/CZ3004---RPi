@@ -45,6 +45,7 @@ if __name__ == '__main__':
     APPLET = 1
 #     STM = 1
 
+
     msgQueue = Queue()
     # STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
     androidListener = Process(target=listen, args=(msgQueue, commsList[ANDROID]))
@@ -61,26 +62,20 @@ if __name__ == '__main__':
     sensor_value = -1 #default?
     first_ack = True #first write to STM
     turning = False #True if going through turning motion, False otherwise
-    timeSinceLastCommand = 0
-    lastTick = time.time()
     lastcommand = None
 
     commsList[APPLET].write('W') #just change the movement here only
 
     try:
         while running:
+
             message = msgQueue.get()
 
-            if message == None:
-                currTime = time.time()
-                timeSinceLastCommand += currTime - lastTick
-                lastTick = currTime
-                #if no msg received, add time to timeSinceLastCommand
+            if message is None:
                 continue
             elif message == 'A': #receipt from STM
                 received = True
                 print('ack received')
-                timeSinceLastCommand = 0
 
                 if first_ack: #for initial STM write
                     first_ack = False
@@ -98,7 +93,6 @@ if __name__ == '__main__':
                 continue
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
-                timeSinceLastCommand = 0
 
                 if sensor_value == 20 and forward == True: #condition to check; indicates when to turn
                     turning = True
@@ -106,17 +100,13 @@ if __name__ == '__main__':
                     msgQueue.put(lastcommand)
                 #     execute turn sequence by adding commands from list
                 elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                    msgQueue.close()
                     sys.exit(0)
                 else:
                     pass
 
                 continue
-            else:
-                if timeSinceLastCommand > 12:
-                    print("time since last command: ", timeSinceLastCommand)
-                    if lastcommand !=None:
-                        msgQueue.put(lastcommand)
-                    continue
+                
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
@@ -153,10 +143,12 @@ if __name__ == '__main__':
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
-                    #To do; android start button
                     msgQueue.put({"command": "move", "direction": 'W'})
+                    lastcommand = {"command": "move", "direction": 'W'}
+            
+            elif command == 'retransmit': #timeout from STM
+                msgQueue.put(lastcommand)
 
-            timeSinceLastCommand = 0
 
 #             received = False
 #             print('waiting for ack')

@@ -1,6 +1,8 @@
 import time
 import socket
 import os
+import select
+
 
 class AppletComm(object):
 
@@ -29,7 +31,7 @@ class AppletComm(object):
                 self.connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.connection.bind((self.ipAddress, self.portNum))
                 self.connection.listen(1)
-                #self.connection.setblocking(0)
+#                 self.connection.setblocking(0)
                 (self.client, self.clientAddr) = self.connection.accept() #Client is the socket to transmit
                 print('[APPLET_ACCEPTED] Connected to Applet.')
                 self.isEstablished = True
@@ -46,7 +48,7 @@ class AppletComm(object):
             #When not yet established, keep retrying
             print('[APPLET_INFO] Retrying Applet Connection')
             self.connection.close()
-            time.sleep(5)
+#             time.sleep(5)
 
     #Disconnect when done
     def disconnect(self):
