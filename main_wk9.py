@@ -43,7 +43,7 @@ if __name__ == '__main__':
     connect(commsList)
 
     STM = 0
-    ANDROID = 1 # shld be 1
+    ANDROID = 1
 
     msgQueue = Queue()
     STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
@@ -70,9 +70,10 @@ if __name__ == '__main__':
             message = msgQueue.get()
 
             if message == None:
-                currTime = time.time()
-                timeSinceLastCommand += currTime - lastTick
-                lastTick = currTime
+                #can work on this if you have time
+                # currTime = time.time()
+                # timeSinceLastCommand += currTime - lastTick
+                # lastTick = currTime
                 #if no msg received, add time to timeSinceLastCommand
                 continue
             elif message == 'A': #receipt from STM
@@ -80,9 +81,10 @@ if __name__ == '__main__':
                 print('ack received')
                 timeSinceLastCommand = 0
 
-                if first_ack:
+                if first_ack: #first W write to STM
                     first_ack = False
-                elif turning:
+                    continue
+                elif turning: #turning commands
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                     if len(turning_commands) == 0: #if last turn command, set turning to False
@@ -98,16 +100,22 @@ if __name__ == '__main__':
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
 
-                if sensor_value == 20: #condition to check
+                if sensor_value == 20 and forward == True: #condition to check, indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                 #     #execute turn sequence by adding commands from list, maybe read from text file, or use a harcoded list
+                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                    sys.exit(0)
+                else:
+                    pass
                 continue
             else:
-                if timeSinceLastCommand > 10:
-                    msgQueue.put(lastcommand)
-                    continue
+                pass
+                # to work on in case STM doesnt respond
+                # if timeSinceLastCommand > 10:
+                #     msgQueue.put(lastcommand)
+                #     continue
 
             try:
                 logfile.write(str(message))

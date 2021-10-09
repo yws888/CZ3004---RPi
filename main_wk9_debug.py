@@ -30,10 +30,7 @@ def listen(msgQueue, com):
         
 
 if __name__ == '__main__':
-    ## Set up message logs
-    # run_timestamp = datetime.now().isoformat()
-    # # os.makedirs('logs', exist_ok=True)
-    # logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
+
     os.system("sudo hciconfig hci0 piscan")
 
     ## Initialisation - RPi Comms
@@ -46,8 +43,7 @@ if __name__ == '__main__':
 
     ANDROID = 0 # shld be 1
     APPLET = 1
-
-#     STM = 2 # shld be 2
+#     STM = 1
 
     msgQueue = Queue()
     # STMListener = Process(target=listen, args=(msgQueue, commsList[STM]))
@@ -76,9 +72,9 @@ if __name__ == '__main__':
             message = msgQueue.get()
 
             if message == None:
-#                 currTime = time.time()
-#                 timeSinceLastCommand += currTime - lastTick
-#                 lastTick = currTime
+                currTime = time.time()
+                timeSinceLastCommand += currTime - lastTick
+                lastTick = currTime
                 #if no msg received, add time to timeSinceLastCommand
                 continue
             elif message == 'A': #receipt from STM
@@ -88,7 +84,6 @@ if __name__ == '__main__':
 
                 if first_ack: #for initial STM write
                     first_ack = False
-                    continue
                 elif turning:
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -117,10 +112,11 @@ if __name__ == '__main__':
 
                 continue
             else:
-                pass
-#                 if timeSinceLastCommand > 10:
-#                     msgQueue.put(lastcommand)
-#                     continue
+                if timeSinceLastCommand > 12:
+                    print("time since last command: ", timeSinceLastCommand)
+                    if lastcommand !=None:
+                        msgQueue.put(lastcommand)
+                    continue
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
@@ -159,6 +155,8 @@ if __name__ == '__main__':
                 if response['mode'] == 'racecar':
                     #To do; android start button
                     msgQueue.put({"command": "move", "direction": 'W'})
+
+            timeSinceLastCommand = 0
 
 #             received = False
 #             print('waiting for ack')
