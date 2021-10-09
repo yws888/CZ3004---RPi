@@ -1,6 +1,5 @@
 from multiprocessing import Process, Queue
 from time import sleep
-import time
 
 from STMComms import STMComm
 from AndroidComms import AndroidComm
@@ -31,7 +30,6 @@ def listen(msgQueue, com):
 if __name__ == '__main__':
     ## Set up message logs
     run_timestamp = datetime.now().isoformat()
-    # os.makedirs('logs', exist_ok=True)
     logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
     os.system("sudo hciconfig hci0 piscan")
 
@@ -59,8 +57,6 @@ if __name__ == '__main__':
     sensor_value = -1 #default?
     first_ack = True #first write to STM
     turning = False #True if going through turning motion, False otherwise
-    timeSinceLastCommand = 0
-    lastTick = time.time()
     lastcommand = None
     commsList[STM].write('W') #the first write to trigger first_ack
 
@@ -69,17 +65,11 @@ if __name__ == '__main__':
         while running:
             message = msgQueue.get()
 
-            if message == None:
-                #can work on this if you have time
-                # currTime = time.time()
-                # timeSinceLastCommand += currTime - lastTick
-                # lastTick = currTime
-                #if no msg received, add time to timeSinceLastCommand
+            if message is None:
                 continue
             elif message == 'A': #receipt from STM
                 received = True
                 print('ack received')
-                timeSinceLastCommand = 0
 
                 if first_ack: #first W write to STM
                     first_ack = False
@@ -98,7 +88,6 @@ if __name__ == '__main__':
                 #see if can repeat the command if
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
-                timeSinceLastCommand = 0
 
                 if sensor_value == 20 and forward == True: #condition to check, indicates when to turn
                     turning = True
@@ -106,16 +95,12 @@ if __name__ == '__main__':
                     msgQueue.put(lastcommand)
                 #     #execute turn sequence by adding commands from list, maybe read from text file, or use a harcoded list
                 elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                    msgQueue.close()
                     sys.exit(0)
                 else:
                     pass
                 continue
-            else:
-                pass
-                # to work on in case STM doesnt respond
-                # if timeSinceLastCommand > 10:
-                #     msgQueue.put(lastcommand)
-                #     continue
+
 
             try:
                 logfile.write(str(message))
@@ -153,6 +138,7 @@ if __name__ == '__main__':
                 if response['mode'] == 'racecar':
                     #To do; android start button
                     msgQueue.put({"command": "move", "direction": 'W'})
+                    lastcommand = {"command": "move", "direction": 'W'}
 
             received = False
             print('waiting for ack')

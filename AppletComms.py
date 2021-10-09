@@ -48,7 +48,7 @@ class AppletComm(object):
             #When not yet established, keep retrying
             print('[APPLET_INFO] Retrying Applet Connection')
             self.connection.close()
-#             time.sleep(5)
+            time.sleep(5)
 
     #Disconnect when done
     def disconnect(self):
