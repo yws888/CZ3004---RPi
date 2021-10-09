@@ -38,14 +38,15 @@ if __name__ == '__main__':
 
     ## Initialisation - RPi Comms
     commsList = []
+    commsList.append(AndroidComm())
     commsList.append(AppletComm())
     # commsList.append(STMComm())
-    commsList.append(AndroidComm())
 
     connect(commsList)
 
-    APPLET = 0
-    ANDROID = 1 # shld be 1
+    ANDROID = 0 # shld be 1
+    APPLET = 1
+
 #     STM = 2 # shld be 2
 
     msgQueue = Queue()
@@ -73,9 +74,9 @@ if __name__ == '__main__':
             message = msgQueue.get()
 
             if message == None:
-                currTime = time.time()
-                timeSinceLastCommand += currTime - lastTick
-                lastTick = currTime
+#                 currTime = time.time()
+#                 timeSinceLastCommand += currTime - lastTick
+#                 lastTick = currTime
                 #if no msg received, add time to timeSinceLastCommand
                 continue
             elif message == 'A': #receipt from STM
@@ -96,7 +97,7 @@ if __name__ == '__main__':
                     lastcommand = {"command": "move", "direction": 'W'}
                 #note fwd dist is between 50 - 200 cm
                 continue
-            elif message.isdigit() or (message.startswith('-') and message[1:].isdigit()): #STM sensor value
+            elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
                 timeSinceLastCommand = 0
 
@@ -111,15 +112,16 @@ if __name__ == '__main__':
 
                 continue
             else:
-                if timeSinceLastCommand > 10:
-                    msgQueue.put(lastcommand)
-                    continue
+                pass
+#                 if timeSinceLastCommand > 10:
+#                     msgQueue.put(lastcommand)
+#                     continue
 
-            if isinstance(message, str) and message != 'A' and (not message.isdigit()): #from Android
+            if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
             else:
                 response = message
-            print(type(response))
+#             print(type(response))
             command = response["command"]
             
             if command == 'move' and received == True: #check if STM always sends received after every movement
@@ -127,19 +129,24 @@ if __name__ == '__main__':
                 if cmd == 'W': #from android
                     commsList[APPLET].write('W30') #just change the movement here only
                     commsList[ANDROID].write('{"status":"moving forward"}')
+                    received = False
                     #change the coordinates accordingly
                 elif cmd == 'S':
                     commsList[APPLET].write('S30')
                     commsList[ANDROID].write('{"status":"moving back"}')
+                    received = False
                 elif cmd == 'D':
                     commsList[APPLET].write('D90')
                     commsList[ANDROID].write('{"status":"turning right"}')
+                    received = False
                 elif cmd == 'A':
                     commsList[APPLET].write('A90')
                     commsList[ANDROID].write('{"status":"turning left"}')
+                    received = False
                 else:
                     commsList[APPLET].write(str(response['direction']))
                     commsList[ANDROID].write('{"command": ' + str(response['direction']) + '}')
+                    received = False
                     #commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
 
             elif command == 'auto': #start button pressed from Android
@@ -148,8 +155,8 @@ if __name__ == '__main__':
                     #To do; android start button
                     msgQueue.put({"command": "move", "direction": 'W'})
 
-            received = False
-            print('waiting for ack')
+#             received = False
+#             print('waiting for ack')
 
 
     except Exception as e:

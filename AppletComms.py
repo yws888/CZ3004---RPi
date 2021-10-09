@@ -95,6 +95,7 @@ class AppletComm(object):
             if (self.isEstablished):
                 message = message + "\n"
                 self.client.send(message.encode('utf-8')) #self.clientAddr)
+                print('written to Applet:' + message)
                 return
 
             #There is no connections. Send what?

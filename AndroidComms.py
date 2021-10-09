@@ -25,13 +25,14 @@ class AndroidComm(object):
             retry = False
             try:
                 #self.serverSock = BluetoothSocket(3)
-                #os.system('lsof -t -i:36126 | xargs kill')
+                #os.system('ps aux | grep /dev/rfcomm5 | xargs kill')
+                uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
+
                 self.serverSock = BluetoothSocket(RFCOMM)
-                self.serverSock.bind(('', RFCOMMChannel)) #Can try bluetooth.PORT_ANY or RFCOMMChannel also
+                self.serverSock.bind(('', RFCOMMChannel)) #Can try PORT_ANY or RFCOMMChannel also
                 self.serverSock.listen(1) #was RFCOMMChannel; Specify how many clients the thing will wait for
                 self.port = self.serverSock.getsockname()[1] #Value returned is [host, port]. We need port
 
-                uuid = '00001101-0000-1000-8000-00805F9B34FB' #Default (using this now)
 
                 #Advertise service referenced from PyBluez Documentation
                 advertise_service(self.serverSock, 'MDPGrp3_RPi Server',
