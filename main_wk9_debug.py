@@ -88,7 +88,7 @@ if __name__ == '__main__':
                 else:
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
-#                     received = False
+                    received = False
                 #note fwd dist is between 50 - 200 cm
                 continue
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
@@ -138,25 +138,20 @@ if __name__ == '__main__':
                     commsList[APPLET].write(str(response['direction']))
                     commsList[ANDROID].write('{"command": ' + str(response['direction']) + '}')
                     received = False
-                    #commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
 
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
+                    received = False
             
             elif command == 'retransmit': #timeout from STM
                 msgQueue.put(lastcommand)
 
 
-#             received = False
-#             print('waiting for ack')
-
-
     except Exception as e:
         print(traceback.format_exc())
-        # print("[MAIN_ERROR] Error. Prepare to shutdown")
 
     finally:
         commsList[ANDROID].disconnect()
