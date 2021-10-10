@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5691b7b5-e933-4172-854d-1260da2b6920" name="Default Changelist" comment="Change imgDict to local variable in function (gather than global variable in main)&#10;Fixed bug - encoded_string converted to string format instead of byte object">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/formatCommands.py" beforeDir="false" afterPath="$PROJECT_DIR$/formatCommands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_wk8_changes.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk8_edits.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_wk9.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk9.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_wk9_debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_wk9_debug.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/turningCommands.py" beforeDir="false" afterPath="$PROJECT_DIR$/turningCommands.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +45,7 @@
       <recent name="C:\Personal materials\NTU materials\Year 3\CZ3004 - FAKKYU (MDP)\RPi_v2" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.formatCommands">
+  <component name="RunManager" selected="Python.client">
     <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="RPi" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,8 +140,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.formatCommands" />
         <item itemvalue="Python.client" />
+        <item itemvalue="Python.formatCommands" />
         <item itemvalue="Python.directory" />
         <item itemvalue="Python.imgRaw" />
       </list>

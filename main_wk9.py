@@ -79,6 +79,7 @@ if __name__ == '__main__':
                         turning = False
                         forward = False
                 else:
+                    #commsList[STM].write('W30') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
 
