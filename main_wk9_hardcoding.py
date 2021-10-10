@@ -42,9 +42,8 @@ if __name__ == '__main__':
     STMListener.start()
 
     turning_commands = turning_cmds
-    received = True #for STM acknowledgment
-    running = True
-    forward = True #True if going towards obstacle; False if moving towards carpark
+    ack_received = True #for STM acknowledgment
+    forward = True #True if going forward towards obstacle; False if moving back to carpark
     sensor_value = -1 #default?
     first_ack = True #first write to STM
     turning = False #True if going through turning motion, False otherwise
@@ -53,26 +52,28 @@ if __name__ == '__main__':
 
 
     try:
-        while running:
+        while True:
             message = msgQueue.get()
 
             if message is None:
                 continue
             elif message == 'A': #receipt from STM
-                received = True
+                ack_received = True
                 print('ack received')
 
                 if first_ack: #first W write to STM
                     first_ack = False
-                    msgQueue.put({"command": "move", "direction": 'W'})
-                    lastcommand = {"command": "move", "direction": 'W'}
+                    msgQueue.put({"command": "move", "direction": 'W40'})
+                    lastcommand = {"command": "move", "direction": 'W40'}
                 elif turning: #turning commands
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                     if len(turning_commands) == 0: #if last turn command, set turning to False
                         turning = False
                         forward = False
+
                 else:
+                    #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
                 #note fwd dist is between 50 - 200 cm
@@ -81,7 +82,7 @@ if __name__ == '__main__':
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
 
-                if sensor_value == 20 and forward == True: #condition to check, indicates when to turn
+                if sensor_value == 20 and forward: #condition to check, indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -97,10 +98,10 @@ if __name__ == '__main__':
                 response = message
             command = response["command"]
             
-            if command == 'move' and received == True: #check if STM always sends received after every movement
+            if command == 'move' and ack_received: #check if STM always sends received after every movement
                 cmd = response['direction']
                 if cmd == 'W': #from android
-                    commsList[STM].write('W30') #just change the movement here only
+                    commsList[STM].write('W10') #just change the movement here only
                     #change the coordinates accordingly
                 elif cmd == 'S':
                     commsList[STM].write('S30')
@@ -111,7 +112,7 @@ if __name__ == '__main__':
                 else:
                     commsList[STM].write(str(response['direction']))
 
-                received = False
+                ack_received = False
                 print('waiting for ack')
 
 

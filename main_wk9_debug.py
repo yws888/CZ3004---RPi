@@ -1,6 +1,5 @@
 from multiprocessing import Process, Queue
 from time import sleep
-import time
 
 from STMComms import STMComm
 from AndroidComms import AndroidComm
@@ -10,7 +9,6 @@ import traceback
 import os
 import json
 import sys
-from datetime import datetime
 from turningCommands import turning_cmds
 
 def connect(commsList):
@@ -63,6 +61,7 @@ if __name__ == '__main__':
     first_ack = True #first write to STM
     turning = False #True if going through turning motion, False otherwise
     lastcommand = None
+    firstCmdAfterTurn = False
 
     commsList[APPLET].write('W') #just change the movement here only
 
@@ -85,11 +84,18 @@ if __name__ == '__main__':
                     if len(turning_commands) == 0: #if last turn command, set turning to False
                         turning = False
                         forward = False
+                        firstCmdAfterTurn = True
+                elif firstCmdAfterTurn:
+                    firstCmdAfterTurn = False
+                    msgQueue.put({"command": "move", "direction": 'W40'})
+                    lastcommand = {"command": "move", "direction": 'W40'}
                 else:
+                    #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
                 #note fwd dist is between 50 - 200 cm
                 continue
+
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
 

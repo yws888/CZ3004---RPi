@@ -79,7 +79,7 @@ if __name__ == '__main__':
                         turning = False
                         forward = False
                 else:
-                    #commsList[STM].write('W30') or whatever value to get sensor reading
+                    #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
 
-                if sensor_value == 20 and forward == True: #condition to check, indicates when to turn
+                if sensor_value == 20 and forward: #condition to check, indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -113,10 +113,10 @@ if __name__ == '__main__':
                 response = message
             command = response["command"]
             
-            if command == 'move' and received == True: #check if STM always sends received after every movement
+            if command == 'move' and received: #check if STM always sends received after every movement
                 cmd = response['direction']
                 if cmd == 'W': #from android
-                    commsList[STM].write('W30') #just change the movement here only
+                    commsList[STM].write('W10') #just change the movement here only
                     commsList[ANDROID].write('{"status":"moving forward"}')
                     #change the coordinates accordingly
                 elif cmd == 'S':
@@ -138,9 +138,8 @@ if __name__ == '__main__':
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
-                    #To do; android start button
-                    msgQueue.put({"command": "move", "direction": 'W'})
-                    lastcommand = {"command": "move", "direction": 'W'}
+                    msgQueue.put({"command": "move", "direction": 'W40'})
+                    lastcommand = {"command": "move", "direction": 'W40'}
 
 
 
