@@ -66,7 +66,6 @@ if __name__ == '__main__':
                     first_ack = False
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
-                    continue
                 elif turning: #turning commands
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -90,8 +89,6 @@ if __name__ == '__main__':
                 elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
                     msgQueue.close()
                     sys.exit(0)
-                else:
-                    pass
                 continue
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
@@ -114,13 +111,12 @@ if __name__ == '__main__':
                 else:
                     commsList[STM].write(str(response['direction']))
 
-            received = False
-            print('waiting for ack')
+                received = False
+                print('waiting for ack')
 
 
     except Exception as e:
         print(traceback.format_exc())
-        # print("[MAIN_ERROR] Error. Prepare to shutdown")
 
     finally:
         commsList[STM].disconnect()

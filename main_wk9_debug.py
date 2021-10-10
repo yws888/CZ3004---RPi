@@ -88,7 +88,6 @@ if __name__ == '__main__':
                 else:
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
-                    received = False
                 #note fwd dist is between 50 - 200 cm
                 continue
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
@@ -120,31 +119,27 @@ if __name__ == '__main__':
                 if cmd == 'W': #from android
                     commsList[APPLET].write('W30') #just change the movement here only
                     commsList[ANDROID].write('{"status":"moving forward"}')
-                    received = False
                     #change the coordinates accordingly
                 elif cmd == 'S':
                     commsList[APPLET].write('S30')
                     commsList[ANDROID].write('{"status":"moving back"}')
-                    received = False
                 elif cmd == 'D':
                     commsList[APPLET].write('D90')
                     commsList[ANDROID].write('{"status":"turning right"}')
-                    received = False
                 elif cmd == 'A':
                     commsList[APPLET].write('A90')
                     commsList[ANDROID].write('{"status":"turning left"}')
-                    received = False
                 else:
                     commsList[APPLET].write(str(response['direction']))
                     commsList[ANDROID].write('{"command": ' + str(response['direction']) + '}')
-                    received = False
+                received = False
+                print('waiting for ack')
 
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
-                    received = False
             
             elif command == 'retransmit': #timeout from STM
                 msgQueue.put(lastcommand)

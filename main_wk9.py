@@ -131,6 +131,8 @@ if __name__ == '__main__':
                     commsList[STM].write(str(response['direction']))
                     #TODO : change this line below accordingly
                     commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
+                received = False
+                print('waiting for ack')
 
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
@@ -139,8 +141,6 @@ if __name__ == '__main__':
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
 
-            received = False
-            print('waiting for ack')
 
 
     except Exception as e:
