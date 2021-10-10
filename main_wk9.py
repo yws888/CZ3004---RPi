@@ -57,6 +57,7 @@ if __name__ == '__main__':
     first_ack = True #first write to STM
     turning = False #True if going through turning motion, False otherwise
     lastcommand = None
+    firstCmdAfterTurn = False
     commsList[STM].write('W') #the first write to trigger first_ack
 
 
@@ -78,6 +79,11 @@ if __name__ == '__main__':
                     if len(turning_commands) == 0: #if last turn command, set turning to False
                         turning = False
                         forward = False
+                elif firstCmdAfterTurn:
+                    firstCmdAfterTurn = False
+                    msgQueue.put({"command": "move", "direction": 'W40'})
+                    lastcommand = {"command": "move", "direction": 'W40'}
+
                 else:
                     #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
@@ -120,7 +126,7 @@ if __name__ == '__main__':
                     commsList[ANDROID].write('{"status":"moving forward"}')
                     #change the coordinates accordingly
                 elif cmd == 'S':
-                    commsList[STM].write('S30')
+                    commsList[STM].write('S10')
                     commsList[ANDROID].write('{"status":"moving back"}')
                 elif cmd == 'D':
                     commsList[STM].write('D90')
