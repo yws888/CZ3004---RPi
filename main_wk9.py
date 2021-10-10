@@ -136,7 +136,6 @@ if __name__ == '__main__':
                     commsList[ANDROID].write('{"status":"turning left"}')
                 else:
                     commsList[STM].write(str(response['direction']))
-                    #TODO : change this line below accordingly
                     commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
                 received = False
                 print('waiting for ack')

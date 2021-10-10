@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # STMListener.start()
     androidListener.start()
     appletListener.start()
-
+    #turning radius = 35 cm
     turning_commands = turning_cmds
     received = True #for STM acknowledgment
     running = True
@@ -78,6 +78,8 @@ if __name__ == '__main__':
 
                 if first_ack: #for initial STM write
                     first_ack = False
+                    commsList[APPLET].write('R') # or whatever value to get sensor reading; cant write here as it may enter queue later
+
                 elif turning:
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -85,12 +87,14 @@ if __name__ == '__main__':
                         turning = False
                         forward = False
                         firstCmdAfterTurn = True
+                        commsList[APPLET].write('R')
                 elif firstCmdAfterTurn:
                     firstCmdAfterTurn = False
-                    msgQueue.put({"command": "move", "direction": 'W40'})
-                    lastcommand = {"command": "move", "direction": 'W40'}
+                    dist = sensor_value + 20
+                    direction = 'W' + str(dist)
+                    msgQueue.put({"command": "move", "direction": direction})
+                    lastcommand = {"command": "move", "direction": direction}
                 else:
-                    #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
                 #note fwd dist is between 50 - 200 cm
@@ -107,11 +111,7 @@ if __name__ == '__main__':
                 elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
                     msgQueue.close()
                     sys.exit(0)
-                else:
-                    pass
-
                 continue
-                
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
@@ -142,10 +142,12 @@ if __name__ == '__main__':
                 print('waiting for ack')
 
             elif command == 'auto': #start button pressed from Android
-                print('mode: ' + response['mode'])
+                print('Android start button pressed')
                 if response['mode'] == 'racecar':
-                    msgQueue.put({"command": "move", "direction": 'W40'})
-                    lastcommand = {"command": "move", "direction": 'W40'}
+                    dist = sensor_value - 50
+                    direction = 'W' + str(dist)
+                    msgQueue.put({"command": "move", "direction": direction})
+                    lastcommand = {"command": "move", "direction": direction}
             
             elif command == 'retransmit': #timeout from STM
                 msgQueue.put(lastcommand)
