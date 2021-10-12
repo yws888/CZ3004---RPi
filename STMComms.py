@@ -24,7 +24,7 @@ class STMComm(object):
                 #Let's wait for connection
                 print ('[STM_INFO] Initializing Connection with STM')
 
-                self.serialConn = serial.Serial(self.commPort, self.baud, timeout = 1) #timeout was formerly 0.1
+                self.serialConn = serial.Serial(self.commPort, self.baud, timeout = 0.1) #try changing timeout value
                 print('[STM_ACCEPTED] Connected to STM.')
                 self.isEstablished = True
                 retry = False
@@ -51,10 +51,9 @@ class STMComm(object):
     #The fundamental trying to receive
     def read(self):
         try:
-            readData = self.serialConn.readline().decode('utf-8')
+            readData = self.serialConn.readline().decode('utf-8') #try changing to read instead of readline
 #             sleep(0.005)
             self.serialConn.flush() #Clean the pipe
-            #readData = readData.decode('utf-8')
             if (readData):
                 print('[STM_INFO] Received: ' + readData)
                 return readData

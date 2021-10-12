@@ -81,13 +81,13 @@ def STMTest():
     STMListener = Process(target=listen, args=(msgQueue, ser))
     STMListener.start()
 
+    timeSinceLastCommand = 0
+
 #     response = getCommands()
     sensor_value = sense()
     distance = sensor_value - 40
-    distance2 = sensor_value - 40
-    string1 = str('W' + str(distance))
-    string2 = str('W' + str(distance2))
-    response = [string1, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', string2]
+    string = str('W' + str(distance))
+    response = [string, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', string]
     print(response)
 #     ser.write('start')
     for command in response:
@@ -102,15 +102,20 @@ def STMTest():
                 msg = msgQueue.get()
                 if msg == 'A':
                     not_received = False
+                    timeSinceLastCommand = 0
                     break
+                else:
+                    timeSinceLastCommand += 1
+                    if timeSinceLastCommand > 18:
+                        print('resending command')
+                        ser.write(command)
+                        timeSinceLastCommand = 0
             except:
                 sys.exit(0)
     sys.exit(0)
 
 if __name__ == '__main__':
      STMTest()
-#    algoProcessingTest()
-    #getCommands()
 
 
 

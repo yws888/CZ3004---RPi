@@ -85,7 +85,6 @@ if __name__ == '__main__':
                     lastcommand = {"command": "move", "direction": 'W40'}
 
                 else:
-                    #commsList[STM].write('R') or whatever value to get sensor reading
                     msgQueue.put({"command": "move", "direction": 'W'})
                     lastcommand = {"command": "move", "direction": 'W'}
 
@@ -136,7 +135,7 @@ if __name__ == '__main__':
                     commsList[ANDROID].write('{"status":"turning left"}')
                 else:
                     commsList[STM].write(str(response['direction']))
-                    commsList[ANDROID].write('{ "robot": {"x":'+ str(response["end_state"][0]) +',"y":'+str(response["end_state"][1])+', "angle":'+str(-1 * (int(response["end_state"][2]) - 90))+'} }')
+                    commsList[ANDROID].write('{"status":' + str(response['direction']) + '}')
                 received = False
                 print('waiting for ack')
 

@@ -10,6 +10,7 @@ import os
 import json
 import sys
 from turningCommands import turning_cmds
+import random
 
 def connect(commsList):
     for comms in commsList:
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     turning = False #True if going through turning motion, False otherwise
     lastcommand = None
     firstCmdAfterTurn = False
+    timeSinceLastCommand = 0
 
     commsList[APPLET].write('W') #just change the movement here only
 
@@ -71,6 +73,10 @@ if __name__ == '__main__':
             message = msgQueue.get()
 
             if message is None:
+                timeSinceLastCommand += 1
+                if timeSinceLastCommand > 8 and not first_ack and lastcommand is not None:
+                    print('resending command')
+                    msgQueue.put(lastcommand)
                 continue
             elif message == 'A': #receipt from STM
                 received = True
@@ -78,7 +84,7 @@ if __name__ == '__main__':
 
                 if first_ack: #for initial STM write
                     first_ack = False
-                    commsList[APPLET].write('R') # or whatever value to get sensor reading; cant write here as it may enter queue later
+                    sensor_value = random.randint(50, 200)
 
                 elif turning:
                     lastcommand = turning_commands.pop(0)
@@ -100,18 +106,18 @@ if __name__ == '__main__':
                 #note fwd dist is between 50 - 200 cm
                 continue
 
-            elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
-                sensor_value = int(message)
+            # elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
+            #     sensor_value = int(message)
 
-                if sensor_value == 20 and forward == True: #condition to check; indicates when to turn
-                    turning = True
-                    lastcommand = turning_commands.pop(0)
-                    msgQueue.put(lastcommand)
-                #     execute turn sequence by adding commands from list
-                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
-                    msgQueue.close()
-                    sys.exit(0)
+            if sensor_value == 20 and forward == True: #condition to check; indicates when to turn
+                turning = True
+                lastcommand = turning_commands.pop(0)
+                msgQueue.put(lastcommand)
                 continue
+        #     execute turn sequence by adding commands from list
+            elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                msgQueue.close()
+                sys.exit(0)
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
@@ -126,15 +132,6 @@ if __name__ == '__main__':
                     commsList[APPLET].write('W10') #just change the movement here only
                     commsList[ANDROID].write('{"status":"moving forward"}')
                     #change the coordinates accordingly
-                elif cmd == 'S':
-                    commsList[APPLET].write('S10')
-                    commsList[ANDROID].write('{"status":"moving back"}')
-                elif cmd == 'D':
-                    commsList[APPLET].write('D90')
-                    commsList[ANDROID].write('{"status":"turning right"}')
-                elif cmd == 'A':
-                    commsList[APPLET].write('A90')
-                    commsList[ANDROID].write('{"status":"turning left"}')
                 else:
                     commsList[APPLET].write(str(response['direction']))
                     commsList[ANDROID].write('{"command": ' + str(response['direction']) + '}')
@@ -149,8 +146,8 @@ if __name__ == '__main__':
                     msgQueue.put({"command": "move", "direction": direction})
                     lastcommand = {"command": "move", "direction": direction}
             
-            elif command == 'retransmit': #timeout from STM
-                msgQueue.put(lastcommand)
+            # elif command == 'retransmit': #timeout from STM
+            #     msgQueue.put(lastcommand)
 
 
     except Exception as e:
