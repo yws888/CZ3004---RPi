@@ -3,7 +3,7 @@ from time import sleep
 
 from STMComms import STMComm
 from AppletComms import AppletComm
-
+from Sensor import sense
 
 import traceback
 import os
@@ -65,8 +65,11 @@ if __name__ == '__main__':
 
                 if first_ack: #first W write to STM
                     first_ack = False
-                    msgQueue.put({"command": "move", "direction": 'W40'})
-                    lastcommand = {"command": "move", "direction": 'W40'}
+                    sensor_value = sense()
+                    distance = sensor_value - 40
+                    string = 'W' + str(distance)
+                    msgQueue.put({"command": "move", "direction": string})
+                    lastcommand = {"command": "move", "direction": string}
                 elif turning: #turning commands
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -89,12 +92,12 @@ if __name__ == '__main__':
             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
                 sensor_value = int(message)
 
-                if sensor_value == 20 and forward: #condition to check, indicates when to turn
+                if 40 <= sensor_value <= 45 and forward: #condition to check, indicates when to turn
                     turning = True
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
                 #execute turn sequence by adding commands from list
-                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+                elif sensor_value <= 15: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
                     msgQueue.close()
                     sys.exit(0)
                 continue

@@ -3,11 +3,12 @@ from datetime import datetime
 import serial, os
 from time import sleep
 # from infer import infer
-from get_sim import get_string
+# from get_sim import get_string
 from STMComms import STMComm
 from AndroidComms import AndroidComm
 import subprocess
 import sys
+from Sensor import sense
 
 from multiprocessing import Process, Queue
 
@@ -69,7 +70,6 @@ def getCommands():
 
 def listen(msgQueue, com):
     while True:
-        sleep(0.005)
         msg = com.read()
         msgQueue.put(msg)
 
@@ -81,8 +81,13 @@ def STMTest():
     STMListener = Process(target=listen, args=(msgQueue, ser))
     STMListener.start()
 
-    response = getCommands()
-#     response = ['W10', 'D17', 'W70', 'A6', 'W20', 'A11', 'W10', 'S40', 'C11', 'S10', 'A6', 'Z6', 'D6', 'Z6', 'D6', 'A6', 'W10', 'A17', 'C11', 'W30', 'A6', 'W50', 'D11', 'W10', 'D6', 'W10', 'D11', 'Z11', 'D6', 'W60', 'A6', 'W10', 'A6', 'W10', 'A17']
+#     response = getCommands()
+    sensor_value = sense()
+    distance = sensor_value - 40
+    distance2 = sensor_value - 40
+    string1 = str('W' + str(distance))
+    string2 = str('W' + str(distance2))
+    response = [string1, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', string2]
     print(response)
 #     ser.write('start')
     for command in response:
