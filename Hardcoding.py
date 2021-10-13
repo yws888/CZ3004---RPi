@@ -89,17 +89,17 @@ def STMTest():
         distance = sensor_value - 60
         string = str('W' + str(distance))
         sense_again = True
-        response = [string, 'A50', 'W50', 'D118', 'W40','D135', 'W50','A50', 'D5', string]
+        response = [string, 'A50', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D25', string]
 
     
     elif sensor_value <= 60:
-        response = ['A45', 'W60', 'D135', 'W40','D135', 'W60','A45', 'D5']
+        response = ['A45', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D5']
         
 #     response = [string, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', 'D5', string]
     print(response)
     
     
-    for i, command in enumerate(response):
+    for command in response:
         
         ser.write(command)
         print(command)
