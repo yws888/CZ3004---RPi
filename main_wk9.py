@@ -30,8 +30,8 @@ def listen(msgQueue, com):
 
 if __name__ == '__main__':
     ## Set up message logs
-    run_timestamp = datetime.now().isoformat()
-    logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
+#     run_timestamp = datetime.now().isoformat()
+#     logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
     os.system("sudo hciconfig hci0 piscan")
 
     commsList = []
@@ -70,7 +70,7 @@ if __name__ == '__main__':
             if message is None:
                 if not received:
                     timeSinceLastAck += 1
-                if timeSinceLastAck > 18:
+                if timeSinceLastAck > 38:
                     print('resending command')
                     msgQueue.put(lastcommand)
                     timeSinceLastAck = 0
@@ -95,7 +95,7 @@ if __name__ == '__main__':
                 elif firstCmdAfterTurn:
                     firstCmdAfterTurn = False
                     sensor_value = sense()
-                    distance = (sensor_value - 50)
+                    distance = (sensor_value - 60)
                     if distance <= 0:
                         direction = 'W1'
                     else:
@@ -104,13 +104,6 @@ if __name__ == '__main__':
                     lastcommand = {"command": "move", "direction": distance}
                 #note fwd dist is between 50 - 200 cm
                 continue
-
-            # if sensor_value == 20 and forward: #condition to check, indicates when to turn
-
-                #     #execute turn sequence by adding commands from list
-                # elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
-                #     msgQueue.close()
-                #     sys.exit(0)
 
             try:
                 logfile.write(str(message))
@@ -145,7 +138,7 @@ if __name__ == '__main__':
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
                     sensor_value = sense()
-                    distance = (sensor_value - 50)
+                    distance = (sensor_value - 60)
                     if distance <= 0:
                         direction = 'W1'
                     else:
