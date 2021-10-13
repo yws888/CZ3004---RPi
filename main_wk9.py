@@ -10,6 +10,7 @@ import json
 import sys
 from datetime import datetime
 from turningCommands import turning_cmds
+from Sensor import sense
 
 def connect(commsList):
     for comms in commsList:
@@ -28,9 +29,9 @@ def listen(msgQueue, com):
         
 
 if __name__ == '__main__':
-    ## Set up message logs
-    run_timestamp = datetime.now().isoformat()
-    logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
+#     ## Set up message logs
+#     run_timestamp = datetime.now().isoformat()
+#     logfile = open(os.path.join('logs', 'rpi_received_log_' + run_timestamp + '.txt'), 'a+')
     os.system("sudo hciconfig hci0 piscan")
 
     commsList = []
@@ -73,6 +74,7 @@ if __name__ == '__main__':
 
                 if first_ack: #first W write to STM
                     first_ack = False
+                    
                 elif turning: #turning commands
                     lastcommand = turning_commands.pop(0)
                     msgQueue.put(lastcommand)
@@ -83,34 +85,34 @@ if __name__ == '__main__':
                     firstCmdAfterTurn = False
                     msgQueue.put({"command": "move", "direction": 'W40'})
                     lastcommand = {"command": "move", "direction": 'W40'}
-
-                else:
-                    msgQueue.put({"command": "move", "direction": 'W'})
-                    lastcommand = {"command": "move", "direction": 'W'}
+# 
+#                 else:
+#                     msgQueue.put({"command": "move", "direction": 'W'})
+#                     lastcommand = {"command": "move", "direction": 'W'}
 
                 #note fwd dist is between 50 - 200 cm
                 continue
+# 
+#             elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
+#                 sensor_value = int(message)
+# 
+#                 if sensor_value == 20 and forward: #condition to check, indicates when to turn
+#                     turning = True
+#                     lastcommand = turning_commands.pop(0)
+#                     msgQueue.put(lastcommand)
+#                 #     #execute turn sequence by adding commands from list
+#                 elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
+#                     msgQueue.close()
+#                     sys.exit(0)
+#                 else:
+#                     pass
+#                 continue
 
-            elif str(message).isdigit() or (str(message).startswith('-') and str(message)[1:].isdigit()): #STM sensor value
-                sensor_value = int(message)
 
-                if sensor_value == 20 and forward: #condition to check, indicates when to turn
-                    turning = True
-                    lastcommand = turning_commands.pop(0)
-                    msgQueue.put(lastcommand)
-                #     #execute turn sequence by adding commands from list
-                elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
-                    msgQueue.close()
-                    sys.exit(0)
-                else:
-                    pass
-                continue
-
-
-            try:
-                logfile.write(str(message))
-            except Exception as e:
-                print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
+#             try:
+#                 logfile.write(str(message))
+#             except Exception as e:
+#                 print('[LOGFILE_ERROR] Logfile Write Error: %s' % str(e))
 
             if isinstance(message, str) and message != 'A' and (not str(message).isdigit()): #from Android
                 response = json.loads(message)
@@ -142,10 +144,10 @@ if __name__ == '__main__':
             elif command == 'auto': #start button pressed from Android
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
+                    sensor_value = sense()
+                    
                     msgQueue.put({"command": "move", "direction": 'W40'})
                     lastcommand = {"command": "move", "direction": 'W40'}
-
-
 
     except Exception as e:
         print(traceback.format_exc())
@@ -153,5 +155,5 @@ if __name__ == '__main__':
     finally:
         commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
-        logfile.close()
+#         logfile.close()
         sys.exit(0)

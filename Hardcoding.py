@@ -2,7 +2,6 @@ from datetime import datetime
 
 import serial, os
 from time import sleep
-# from infer import infer
 # from get_sim import get_string
 from STMComms import STMComm
 from AndroidComms import AndroidComm
@@ -82,16 +81,26 @@ def STMTest():
     STMListener.start()
 
     timeSinceLastCommand = 0
+    sense_again = False
 
 #     response = getCommands()
     sensor_value = sense()
-    distance = sensor_value - 40
-    string = str('W' + str(distance))
-    response = [string, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', string]
+    if sensor_value > 60:
+        distance = sensor_value - 60
+        string = str('W' + str(distance))
+        sense_again = True
+        response = [string, 'A50', 'W50', 'D118', 'W40','D135', 'W50','A50', 'D5', string]
+
+    
+    elif sensor_value <= 60:
+        response = ['A45', 'W60', 'D135', 'W40','D135', 'W60','A45', 'D5']
+        
+#     response = [string, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', 'D5', string]
     print(response)
-#     ser.write('start')
-    for command in response:
-        #message = command + '\r\n'
+    
+    
+    for i, command in enumerate(response):
+        
         ser.write(command)
         print(command)
         not_received = True
@@ -104,14 +113,19 @@ def STMTest():
                     not_received = False
                     timeSinceLastCommand = 0
                     break
-                else:
-                    timeSinceLastCommand += 1
-                    if timeSinceLastCommand > 18:
-                        print('resending command')
-                        ser.write(command)
-                        timeSinceLastCommand = 0
+#                 else:
+#                     timeSinceLastCommand += 1
+#                     if timeSinceLastCommand > 88:
+#                         print('resending command: time - ', timeSinceLastCommand)
+#                         ser.write(command)
+#                         timeSinceLastCommand = 0
             except:
                 sys.exit(0)
+                
+#         if i == 0:
+#             sensor_value = sense()
+#             distance = sensor_value - 60
+#             string = str('W' + str(distance))
     sys.exit(0)
 
 if __name__ == '__main__':

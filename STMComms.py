@@ -51,7 +51,7 @@ class STMComm(object):
     #The fundamental trying to receive
     def read(self):
         try:
-            readData = self.serialConn.readline().decode('utf-8') #try changing to read instead of readline
+            readData = self.serialConn.read().decode('utf-8') #try changing to read instead of readline
 #             sleep(0.005)
             self.serialConn.flush() #Clean the pipe
             if (readData):
