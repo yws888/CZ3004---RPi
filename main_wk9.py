@@ -29,6 +29,7 @@ def listen(msgQueue, com):
         
 
 if __name__ == '__main__':
+
     os.system("sudo hciconfig hci0 piscan")
 
     commsList = []
@@ -67,7 +68,7 @@ if __name__ == '__main__':
             if message is None:
                 if not received:
                     timeSinceLastAck += 1
-                if timeSinceLastAck > 18:
+                if timeSinceLastAck > 38:
                     print('resending command')
                     msgQueue.put(lastcommand)
                     timeSinceLastAck = 0
@@ -127,6 +128,14 @@ if __name__ == '__main__':
                 print('mode: ' + response['mode'])
                 if response['mode'] == 'racecar':
                     sensor_value = sense()
+                    distance = (sensor_value - 60)
+                    if distance <= 0:
+                        direction = 'W1'
+                    else:
+                        direction = 'W' + distance
+                    msgQueue.put({"command": "move", "direction": distance})
+                    lastcommand = {"command": "move", "direction": distance}
+
 
 
     except Exception as e:

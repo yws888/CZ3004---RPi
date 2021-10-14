@@ -8,53 +8,31 @@ from AndroidComms import AndroidComm
 import subprocess
 import sys
 from Sensor import sense
+import json
+import traceback
 
 from multiprocessing import Process, Queue
 
-def algoProcessingTest():
-    algoCommands = []
-    algoResponse = []
-
-    count = 0
-    for i in algoResponse:
-        msgSplit = i['actions'].split('|')  # Try without semi-col                        
-        for command in msgSplit:
-            if (command):
-                algoCommands.append( {"command": "move", "direction": command})
-        states = iter(i['discrete_states'])
-        next(states)
-        for state in states:
-            algoCommands[count]["end_state"] = state
-            count+=1
-        algoCommands.append({"command": "picture", "coordinates": i['block']})
-        count+=1
-    
-    print(algoCommands)
-
-def ImageRec():
-    print('Initializing Connections:')
-    ser = serial.Serial(
-        port='/dev/ttyUSB0',
-        baudrate=115200,
-    )
-    print("initialize STMController successful")
-    print("Writing command")
-
-    not_recognized = True
-    count = 1
-    while not_recognized:
-    #     ser.write(str.encode('L90\r\n'))
-        ser.write(str.encode('D90\r\n'))
-        response = infer()
-        if response != []:
-            print(response)
-            print('iteration: ' + count)
-            for i in range(len(response)):
-                if response[i]["image_id"] == '0' and response[i]["description"] == 'Obstacle':
-                    not_recognized = False
+def AndroidConnect():
+    android = AndroidComm()
+    android.connect()
+    queue = Queue()
+    AndroidListener = Process(target=listen, args=(queue, android))
+    AndroidListener.start()
+    sensor_value = sense()
+    distance = int(sensor_value - 40)
+    while True:
+        try:
+            msg = queue.get()
+            msg = json.loads(msg)
+            if msg['command'] == 'obstacle' and msg['mode'] == 'racecar' :
+                AndroidListener.terminate()
+                return distance
+        except:
+            print(traceback.format_exc())
 
 def getCommands():
-    response = get_string() #returns a list
+    # response = get_string() #returns a list
     
     commands = []
     
@@ -72,7 +50,7 @@ def listen(msgQueue, com):
         msg = com.read()
         msgQueue.put(msg)
 
-def STMTest():
+def STMTest(distance):
     
     ser = STMComm()
     ser.connect()
@@ -86,9 +64,10 @@ def STMTest():
 #     response = getCommands()
     sensor_value = sense()
     if sensor_value > 80:
-        distance = sensor_value - 50
+
+        distance = sensor_value - 40
         string = str('W' + str(distance))
-        string2 = str('W' + str((distance - 10)))
+        string2 = str('W' + str((distance)))
         sense_again = True
 #         response = [string, 'A50', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D20', string] #for lab surface
         response = [string, 'A50', 'W50', 'D120', 'W40','D120', 'W70','A45',  string2] #for outside behind surface
@@ -124,15 +103,16 @@ def STMTest():
                         timeSinceLastCommand = 0
             except:
                 sys.exit(0)
-                
-#         if i == 0:
-#             sensor_value = sense()
-#             distance = sensor_value - 60
-#             string = str('W' + str(distance))
-    sys.exit(0)
+
+    value = sense()
+    distance = int(value - 10)
+    final_str = str('W' + str(distance))
+    ser.write(final_str)
 
 if __name__ == '__main__':
-     STMTest()
+    distance = AndroidConnect()
+    if isinstance(distance, int):
+        STMTest(distance)
 
 
 
