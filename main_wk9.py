@@ -89,7 +89,7 @@ if __name__ == '__main__':
                     firstCmdAfterTurn = False
 
                     sensor_value = sense()
-                    distance = (sensor_value - 50)
+                    distance = (sensor_value - 60)
                     if distance <= 0:
                         direction = 'W1'
                     else:
@@ -98,13 +98,6 @@ if __name__ == '__main__':
                     lastcommand = {"command": "move", "direction": distance}
                 #note fwd dist is between 50 - 200 cm
                 continue
-
-            # if sensor_value == 20 and forward: #condition to check, indicates when to turn
-
-                #     #execute turn sequence by adding commands from list
-                # elif sensor_value == 10: #condition to check; indicates when to stop (i.e. in carpark). Also when turning back, to rely on count (i.e. no. of times forward just now) or sensor data?
-                #     msgQueue.close()
-                #     sys.exit(0)
 
             if isinstance(message, str) and message != 'A': #from Android
                 response = json.loads(message)
@@ -142,5 +135,4 @@ if __name__ == '__main__':
     finally:
         commsList[STM].disconnect()
         commsList[ANDROID].disconnect()
-#         logfile.close()
         sys.exit(0)
