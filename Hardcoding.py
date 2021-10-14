@@ -85,15 +85,18 @@ def STMTest():
 
 #     response = getCommands()
     sensor_value = sense()
-    if sensor_value > 60:
-        distance = sensor_value - 60
+    if sensor_value > 80:
+        distance = sensor_value - 50
         string = str('W' + str(distance))
+        string2 = str('W' + str((distance - 10)))
         sense_again = True
-        response = [string, 'A50', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D25', string]
-
+#         response = [string, 'A50', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D20', string] #for lab surface
+        response = [string, 'A50', 'W50', 'D120', 'W40','D120', 'W70','A45',  string2] #for outside behind surface
     
-    elif sensor_value <= 60:
-        response = ['A45', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D5']
+    elif sensor_value <= 80:
+        #response = ['A50', 'W50', 'D118', 'W40','D118', 'W50','A50', 'D20'] #lab
+        response = ['W20', 'A60', 'W45', 'D125', 'W40','D125', 'W45','A60', 'W20'] 
+
         
 #     response = [string, 'A90', 'D90', 'D90', 'W50','D90','D90', 'A90', 'D5', string]
     print(response)
@@ -113,12 +116,12 @@ def STMTest():
                     not_received = False
                     timeSinceLastCommand = 0
                     break
-#                 else:
-#                     timeSinceLastCommand += 1
-#                     if timeSinceLastCommand > 88:
-#                         print('resending command: time - ', timeSinceLastCommand)
-#                         ser.write(command)
-#                         timeSinceLastCommand = 0
+                else:
+                    timeSinceLastCommand += 1
+                    if timeSinceLastCommand > 58:
+                        print('resending command: time - ', timeSinceLastCommand)
+                        ser.write(command)
+                        timeSinceLastCommand = 0
             except:
                 sys.exit(0)
                 
